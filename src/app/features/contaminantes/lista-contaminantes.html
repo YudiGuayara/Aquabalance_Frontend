@@ -1,0 +1,122 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h2>☣️ Contaminantes</h2>
+      <p>Gestiona los contaminantes registrados en el sistema</p>
+    </div>
+    <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo Contaminante</button>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="mostrarFormulario">
+    <div class="modal">
+
+      <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Contaminante</h3>
+
+      <!-- NOMBRE -->
+      <div class="field">
+        <label>Nombre *</label>
+        <input
+          type="text"
+          [(ngModel)]="form.nombre"
+          required
+          minlength="3"
+          placeholder="Ej: Plomo, Mercurio"
+        />
+      </div>
+
+      <!-- CARGA -->
+      <div class="field">
+        <label>Carga (mg/L) *</label>
+        <input
+          type="number"
+          [(ngModel)]="form.carga"
+          required
+          min="0"
+        />
+      </div>
+
+      <!-- NIVEL -->
+      <div class="field">
+        <label>Nivel *</label>
+        <select [(ngModel)]="form.nivel" required>
+          <option [ngValue]="null">Seleccione nivel</option>
+          <option *ngFor="let n of niveles" [ngValue]="n">{{ n }}</option>
+        </select>
+      </div>
+
+      <!-- FUENTE -->
+      <div class="field">
+        <label>Fuente de Origen *</label>
+        <input
+          type="text"
+          [(ngModel)]="form.fuenteOrigen"
+          required
+          minlength="3"
+          placeholder="Ej: Industria textil"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="cerrarFormulario()">
+          Cancelar
+        </button>
+
+        <button
+          class="btn-primary"
+          (click)="guardar()"
+          [disabled]="!form.nombre || !form.carga || !form.nivel || !form.fuenteOrigen"
+        >
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+
+    <div class="loading" *ngIf="cargando">Cargando...</div>
+
+    <table *ngIf="!cargando && contaminantes.length > 0">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Carga</th>
+        <th>Nivel</th>
+        <th>Fuente</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let c of contaminantes">
+        <td>{{ c.id }}</td>
+        <td>{{ c.nombre }}</td>
+        <td>{{ c.carga }} mg/L</td>
+        <td>
+          <span class="badge" [ngClass]="nivelColor(c.nivel)">
+            {{ c.nivel }}
+          </span>
+        </td>
+        <td>{{ c.fuenteOrigen }}</td>
+        <td>
+          <button class="btn-edit" (click)="editar(c)">✏️</button>
+          <button class="btn-delete" (click)="eliminar(c.id!)">🗑️</button>
+        </td>
+      </tr>
+      </tbody>
+
+    </table>
+
+    <div class="empty" *ngIf="!cargando && contaminantes.length === 0">
+      No hay contaminantes registrados aún.
+    </div>
+
+  </div>
+</div>

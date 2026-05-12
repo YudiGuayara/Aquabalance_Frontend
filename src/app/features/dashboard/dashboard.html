@@ -1,0 +1,95 @@
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <span class="brand-icon">💧</span>
+      <span class="brand-name">AquaBalance</span>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <p class="nav-section">Monitoreo</p>
+
+      <a routerLink="recursos" routerLinkActive="active" class="nav-item">
+        <span>🏞️</span> Recursos
+      </a>
+
+      <a routerLink="contaminantes" routerLinkActive="active" class="nav-item">
+        <span>☣️</span> Contaminantes
+      </a>
+
+      <a routerLink="mediciones" routerLinkActive="active" class="nav-item">
+        <span>📊</span> Mediciones
+      </a>
+
+      <p class="nav-section">Alertas</p>
+
+      <a routerLink="eventos" routerLinkActive="active" class="nav-item">
+        <span>🚨</span> Eventos
+      </a>
+
+      <a routerLink="alertas" routerLinkActive="active" class="nav-item">
+        <span>⚠️</span> Alertas
+      </a>
+
+      <p class="nav-section">Reportes</p>
+
+      <a routerLink="reportes" routerLinkActive="active" class="nav-item">
+        <span>📄</span> Informes
+      </a>
+
+      <!-- 🔥 ADMIN SOLO SI EXISTE USUARIO -->
+      <ng-container *ngIf="esAdmin()">
+        <p class="nav-section">Administración</p>
+
+        <a routerLink="usuarios" routerLinkActive="active" class="nav-item">
+          <span>👥</span> Usuarios
+        </a>
+      </ng-container>
+
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+        <h2>Sistema de Monitoreo Hídrico</h2>
+      </div>
+
+      <div class="topbar-right">
+
+        <!-- 🔥 evita crash si usuario aún no carga -->
+        <span class="usuario-nombre">
+          {{ usuario?.nombre || 'Usuario' }}
+        </span>
+
+        <span class="usuario-rol">
+          {{ usuario?.rol || '' }}
+        </span>
+
+        <button class="btn-logout" (click)="logout()">
+          Salir
+        </button>
+
+      </div>
+
+    </header>
+
+    <!-- CONTENIDO HIJOS -->
+    <main class="content">
+
+      <!-- 🔥 ESTO ES OBLIGATORIO -->
+      <router-outlet></router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

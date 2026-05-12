@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="card">
+
+    <!-- LOGO -->
+    <img src="/Logotipo2.png" class="logo">
+
+    <!-- TITULO -->
+    <p class="subtitle">
+      Sistema de gestión y monitoreo de recursos hídricos
+    </p>
+
+    <!-- ERROR -->
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <!-- FORM -->
+    <form (ngSubmit)="onSubmit()" #formRef="ngForm">
+
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input
+          type="email"
+          [(ngModel)]="form.email"
+          name="email"
+          placeholder="tu@email.com"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input
+          type="password"
+          [(ngModel)]="form.password"
+          name="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button type="submit" [disabled]="cargando || formRef.invalid">
+        {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+
+    </form>
+
+    <p class="link">
+      ¿No tienes cuenta?
+      <a routerLink="/auth/registro">Regístrate</a>
+    </p>
+
+  </div>
+</div>
