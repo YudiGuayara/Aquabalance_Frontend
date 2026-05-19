@@ -9,40 +9,79 @@
       Sistema de gestión y monitoreo de recursos hídricos
     </p>
 
-    <!-- ERROR -->
+    <!-- ERROR GLOBAL -->
     <div class="error" *ngIf="error">{{ error }}</div>
 
     <!-- FORM -->
     <form (ngSubmit)="onSubmit()" #formRef="ngForm">
 
+      <!-- EMAIL -->
       <div class="field">
         <label>Correo electrónico</label>
+
         <input
           type="email"
           [(ngModel)]="form.email"
           name="email"
           placeholder="tu@email.com"
           required
+          [class.input-error]="!form.email || form.email.trim().length === 0 || form.email.indexOf('@') === -1"
         />
+
+        <small class="error-text"
+               *ngIf="!form.email || form.email.trim().length === 0">
+          El correo es obligatorio
+        </small>
+
+        <small class="error-text"
+               *ngIf="form.email && form.email.indexOf('@') === -1">
+          El correo no es válido
+        </small>
+
       </div>
 
+      <!-- PASSWORD -->
       <div class="field">
         <label>Contraseña</label>
+
         <input
           type="password"
           [(ngModel)]="form.password"
           name="password"
           placeholder="••••••••"
           required
+          [class.input-error]="!form.password || form.password.length < 6"
         />
+
+        <small class="error-text"
+               *ngIf="!form.password">
+          La contraseña es obligatoria
+        </small>
+
+        <small class="error-text"
+               *ngIf="form.password && form.password.length < 6">
+          Mínimo 6 caracteres
+        </small>
+
       </div>
 
-      <button type="submit" [disabled]="cargando || formRef.invalid">
+      <!-- BOTÓN -->
+      <button
+        type="submit"
+        [disabled]="
+          cargando ||
+          !form.email ||
+          !form.password ||
+          form.password.length < 6
+        ">
+
         {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
+
       </button>
 
     </form>
 
+    <!-- LINK -->
     <p class="link">
       ¿No tienes cuenta?
       <a routerLink="/auth/registro">Regístrate</a>

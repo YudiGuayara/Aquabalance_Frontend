@@ -8,19 +8,31 @@
       <p>Registro y monitoreo de parámetros del agua</p>
     </div>
 
-    <button class="btn-primary" (click)="abrirFormulario()">
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="abrirFormulario()">
+
       + Nueva Medición
+
     </button>
 
   </div>
 
   <!-- ERROR GLOBAL -->
-  <div class="error" *ngIf="error">
+  <div
+    class="error"
+    *ngIf="error && !mostrarFormulario">
+
     {{ error }}
+
   </div>
 
   <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario">
+
     <div class="modal">
 
       <h3>
@@ -29,81 +41,200 @@
 
       <!-- RECURSO -->
       <div class="field">
+
         <label>Recurso</label>
-        <select [(ngModel)]="form.idRecurso">
-          <option [ngValue]="0" disabled>Selecciona un recurso</option>
-          <option *ngFor="let r of recursos" [ngValue]="r.id">
-            {{ r.nombre }}
+
+        <select
+          [(ngModel)]="form.idRecurso"
+
+          [class.input-error]="form.idRecurso === 0">
+
+          <option [ngValue]="0" disabled>
+            Selecciona un recurso
           </option>
+
+          <option
+            *ngFor="let r of recursos"
+            [ngValue]="r.id">
+
+            {{ r.nombre }}
+
+          </option>
+
         </select>
 
-        <small class="error" *ngIf="form.idRecurso === 0">
+        <small
+          class="error-text"
+          *ngIf="form.idRecurso === 0">
+
           Debes seleccionar un recurso
+
         </small>
+
       </div>
 
       <!-- CONTAMINANTE -->
       <div class="field">
+
         <label>Contaminante</label>
-        <select [(ngModel)]="form.idContaminante">
-          <option [ngValue]="0" disabled>Selecciona un contaminante</option>
-          <option *ngFor="let c of contaminantes" [ngValue]="c.id">
-            {{ c.nombre }}
+
+        <select
+          [(ngModel)]="form.idContaminante"
+
+          [class.input-error]="form.idContaminante === 0">
+
+          <option [ngValue]="0" disabled>
+            Selecciona un contaminante
           </option>
+
+          <option
+            *ngFor="let c of contaminantes"
+            [ngValue]="c.id">
+
+            {{ c.nombre }}
+
+          </option>
+
         </select>
 
-        <small class="error" *ngIf="form.idContaminante === 0">
+        <small
+          class="error-text"
+          *ngIf="form.idContaminante === 0">
+
           Debes seleccionar un contaminante
+
         </small>
+
       </div>
 
-      <!-- pH -->
+      <!-- PH -->
       <div class="field">
-        <label>pH</label>
-        <input type="number" [(ngModel)]="form.ph" min="0" max="14" step="0.1" />
 
-        <small class="error" *ngIf="form.ph < 0 || form.ph > 14">
-          El pH debe estar entre 0 y 14
+        <label>pH</label>
+
+        <input
+          type="number"
+          [(ngModel)]="form.ph"
+          min="0"
+          max="14"
+          step="0.1"
+          placeholder="Ej: 7.0"
+
+          [class.input-error]="
+            form.ph == null ||
+            form.ph < 0 ||
+            form.ph > 14
+          "
+        />
+
+        <small
+          class="error-text"
+          *ngIf="form.ph == null">
+
+          El pH es obligatorio
+
         </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.ph != null && (form.ph < 0 || form.ph > 14)">
+
+          El pH debe estar entre 0 y 14
+
+        </small>
+
       </div>
 
       <!-- TEMPERATURA -->
       <div class="field">
-        <label>Temperatura (°C)</label>
-        <input type="number" [(ngModel)]="form.temperatura" step="0.1" />
 
-        <small class="error" *ngIf="form.temperatura == null">
+        <label>Temperatura (°C)</label>
+
+        <input
+          type="number"
+          [(ngModel)]="form.temperatura"
+          step="0.1"
+          placeholder="Ej: 24.5"
+
+          [class.input-error]="
+            form.temperatura == null ||
+            form.temperatura < 0
+          "
+        />
+
+        <small
+          class="error-text"
+          *ngIf="form.temperatura == null">
+
           La temperatura es obligatoria
+
         </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.temperatura != null && form.temperatura < 0">
+
+          La temperatura no puede ser negativa
+
+        </small>
+
       </div>
 
       <!-- BOTONES -->
       <div class="modal-actions">
 
-        <button class="btn-secondary" (click)="cerrarFormulario()">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cerrarFormulario()">
+
           Cancelar
+
         </button>
 
-        <button class="btn-primary" (click)="guardar()">
+        <button
+          type="button"
+          class="btn-primary"
+
+          [disabled]="
+            form.idRecurso === 0 ||
+            form.idContaminante === 0 ||
+            form.ph == null ||
+            form.ph < 0 ||
+            form.ph > 14 ||
+            form.temperatura == null ||
+            form.temperatura < 0
+          "
+
+          (click)="guardar()">
+
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+
         </button>
 
       </div>
 
     </div>
+
   </div>
 
   <!-- TABLA -->
   <div class="table-container">
 
-    <div class="loading" *ngIf="cargando">
+    <div
+      class="loading"
+      *ngIf="cargando">
+
       Cargando...
+
     </div>
 
     <table *ngIf="!cargando && mediciones.length > 0">
 
       <thead>
+
       <tr>
+
         <th>ID</th>
         <th>Recurso</th>
         <th>Contaminante</th>
@@ -111,31 +242,71 @@
         <th>Temperatura</th>
         <th>Fecha</th>
         <th>Acciones</th>
+
       </tr>
+
       </thead>
 
       <tbody>
+
       <tr *ngFor="let m of mediciones">
 
         <td>{{ m.id }}</td>
-        <td>{{ nombreRecurso(m.idRecurso) }}</td>
-        <td>{{ nombreContaminante(m.idContaminante) }}</td>
-        <td>{{ m.ph }}</td>
-        <td>{{ m.temperatura }}°C</td>
-        <td>{{ m.fecha | date:'short' }}</td>
 
         <td>
-          <button class="btn-edit" (click)="editar(m)">✏️</button>
-          <button class="btn-delete" (click)="eliminar(m.id!)">🗑️</button>
+          {{ nombreRecurso(m.idRecurso) }}
+        </td>
+
+        <td>
+          {{ nombreContaminante(m.idContaminante) }}
+        </td>
+
+        <td>
+          {{ m.ph }}
+        </td>
+
+        <td>
+          {{ m.temperatura }}°C
+        </td>
+
+        <td>
+          {{ m.fecha | date:'short' }}
+        </td>
+
+        <td>
+
+          <button
+            class="btn-edit"
+            type="button"
+            (click)="editar(m)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            type="button"
+            (click)="eliminar(m.id!)">
+
+            🗑️
+
+          </button>
+
         </td>
 
       </tr>
+
       </tbody>
 
     </table>
 
-    <div class="empty" *ngIf="!cargando && mediciones.length === 0">
+    <div
+      class="empty"
+      *ngIf="!cargando && mediciones.length === 0">
+
       No hay mediciones registradas aún.
+
     </div>
 
   </div>

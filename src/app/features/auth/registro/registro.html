@@ -1,55 +1,102 @@
 <div class="container">
   <div class="card">
+
     <h2>AquaBalance</h2>
     <h3>Crear cuenta</h3>
 
     <div class="error" *ngIf="error">{{ error }}</div>
     <div class="success" *ngIf="exito">{{ exito }}</div>
 
-    <form (ngSubmit)="onSubmit()" #registroForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #formRef="ngForm">
+
+      <!-- NOMBRE -->
       <div class="field">
         <label>Nombre completo</label>
+
         <input
           type="text"
           [(ngModel)]="form.nombre"
           name="nombre"
           placeholder="Tu nombre"
+          [class.input-error]="esNombreInvalido() && form.nombre !== ''"
         />
+
+        <small class="error-text" *ngIf="esNombreInvalido()">
+          El nombre es obligatorio
+        </small>
       </div>
 
+      <!-- EMAIL -->
       <div class="field">
         <label>Correo electrónico</label>
+
         <input
           type="email"
           [(ngModel)]="form.email"
           name="email"
           placeholder="tu@email.com"
+          [class.input-error]="esEmailInvalido() && form.email !== ''"
         />
+
+        <small class="error-text" *ngIf="esEmailInvalido()">
+          Correo inválido o vacío
+        </small>
       </div>
 
+      <!-- PASSWORD -->
       <div class="field">
         <label>Contraseña</label>
+
         <input
           type="password"
           [(ngModel)]="form.password"
           name="password"
           placeholder="••••••••"
+          [class.input-error]="esPasswordInvalida() && form.password !== ''"
         />
+
+        <small class="error-text" *ngIf="esPasswordInvalida()">
+          Mínimo 6 caracteres
+        </small>
       </div>
 
+      <!-- ROL -->
       <div class="field">
         <label>Rol</label>
-        <select [(ngModel)]="form.rol" name="rol">
+
+        <select
+          [(ngModel)]="form.rol"
+          name="rol"
+          [class.input-error]="esRolInvalido()">
+
+          <option value="" disabled>Selecciona un rol</option>
           <option value="Administrador">Administrador</option>
           <option value="Operador">Operador</option>
           <option value="UsuarioPublico">Usuario Publico</option>
+
         </select>
+
+        <small class="error-text" *ngIf="esRolInvalido()">
+          Debes seleccionar un rol
+        </small>
       </div>
 
-      <button type="submit" [disabled]="cargando">
+      <!-- BOTÓN -->
+      <button
+        type="submit"
+        [disabled]="cargando || esFormularioInvalido()">
+
         {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+
       </button>
+
     </form>
 
-    <p class="link">¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a></p>  </div>
+    <!-- routerLink -->
+    <p class="link">
+      ¿Ya tienes cuenta?
+      <a routerLink="/auth/login">Inicia sesión</a>
+    </p>
+
+  </div>
 </div>

@@ -1,63 +1,292 @@
 <div class="page">
+
+  <!-- HEADER -->
   <div class="page-header">
+
     <div>
       <h2>🏞️ Recursos Hídricos</h2>
       <p>Gestiona los recursos de agua del sistema</p>
     </div>
-    <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo Recurso</button>
+
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="abrirFormulario()">
+
+      + Nuevo Recurso
+
+    </button>
+
   </div>
 
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <!-- ERROR GLOBAL -->
+  <div
+    class="error"
+    *ngIf="error && !mostrarFormulario">
+
+    {{ error }}
+
+  </div>
 
   <!-- FORMULARIO -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario">
+
     <div class="modal">
-      <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Recurso</h3>
 
+      <h3>
+        {{ modoEdicion ? 'Editar' : 'Nuevo' }} Recurso
+      </h3>
+
+      <!-- NOMBRE -->
       <div class="field">
-        <label>Nombre</label>
-        <input type="text" [(ngModel)]="form.nombre" placeholder="Nombre del recurso" />
+
+        <label>Nombre *</label>
+
+        <input
+          type="text"
+          [(ngModel)]="form.nombre"
+          placeholder="Nombre del recurso"
+
+          [class.input-error]="
+            !form.nombre ||
+            (form.nombre && form.nombre.length < 3)
+          "
+        />
+
+        <small
+          class="error-text"
+          *ngIf="!form.nombre">
+
+          El nombre es obligatorio
+
+        </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.nombre && form.nombre.length < 3">
+
+          El nombre debe tener mínimo 3 caracteres
+
+        </small>
+
       </div>
 
+      <!-- TIPO -->
       <div class="field">
-        <label>Tipo</label>
-        <select [(ngModel)]="form.tipo">
-          <option *ngFor="let tipo of tiposRecurso" [value]="tipo">{{ tipo }}</option>
+
+        <label>Tipo *</label>
+
+        <select
+          [(ngModel)]="form.tipo"
+
+          [class.input-error]="!form.tipo">
+
+          <option [ngValue]="null" disabled>
+            Selecciona un tipo
+          </option>
+
+          <option
+            *ngFor="let tipo of tiposRecurso"
+            [ngValue]="tipo">
+
+            {{ tipo }}
+
+          </option>
+
         </select>
+
+        <small
+          class="error-text"
+          *ngIf="!form.tipo">
+
+          Debes seleccionar un tipo
+
+        </small>
+
       </div>
 
+      <!-- UBICACION -->
       <div class="field">
-        <label>Ubicación</label>
-        <input type="text" [(ngModel)]="form.ubicacion" placeholder="Ej: Valle del Cauca" />
+
+        <label>Ubicación *</label>
+
+        <input
+          type="text"
+          [(ngModel)]="form.ubicacion"
+          placeholder="Ej: Valle del Cauca"
+
+          [class.input-error]="
+            !form.ubicacion ||
+            (form.ubicacion && form.ubicacion.length < 3)
+          "
+        />
+
+        <small
+          class="error-text"
+          *ngIf="!form.ubicacion">
+
+          La ubicación es obligatoria
+
+        </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.ubicacion && form.ubicacion.length < 3">
+
+          La ubicación debe tener mínimo 3 caracteres
+
+        </small>
+
       </div>
 
+      <!-- LATITUD Y LONGITUD -->
       <div class="field-row">
+
+        <!-- LATITUD -->
         <div class="field">
-          <label>Latitud</label>
-          <input type="number" [(ngModel)]="form.latitud" />
+
+          <label>Latitud *</label>
+
+          <input
+            type="number"
+            [(ngModel)]="form.latitud"
+            step="0.0001"
+            placeholder="Ej: 4.6097"
+
+            [class.input-error]="
+              form.latitud == null ||
+              form.latitud < -90 ||
+              form.latitud > 90
+            "
+          />
+
+          <small
+            class="error-text"
+            *ngIf="form.latitud == null">
+
+            La latitud es obligatoria
+
+          </small>
+
+          <small
+            class="error-text"
+            *ngIf="
+              form.latitud != null &&
+              (form.latitud < -90 || form.latitud > 90)
+            ">
+
+            La latitud debe estar entre -90 y 90
+
+          </small>
+
         </div>
+
+        <!-- LONGITUD -->
         <div class="field">
-          <label>Longitud</label>
-          <input type="number" [(ngModel)]="form.longitud" />
+
+          <label>Longitud *</label>
+
+          <input
+            type="number"
+            [(ngModel)]="form.longitud"
+            step="0.0001"
+            placeholder="Ej: -74.0817"
+
+            [class.input-error]="
+              form.longitud == null ||
+              form.longitud < -180 ||
+              form.longitud > 180
+            "
+          />
+
+          <small
+            class="error-text"
+            *ngIf="form.longitud == null">
+
+            La longitud es obligatoria
+
+          </small>
+
+          <small
+            class="error-text"
+            *ngIf="
+              form.longitud != null &&
+              (form.longitud < -180 || form.longitud > 180)
+            ">
+
+            La longitud debe estar entre -180 y 180
+
+          </small>
+
         </div>
+
       </div>
 
+      <!-- BOTONES -->
       <div class="modal-actions">
-        <button class="btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
-        <button class="btn-primary" (click)="guardar()">
-          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cerrarFormulario()">
+
+          Cancelar
+
         </button>
+
+        <button
+          type="button"
+          class="btn-primary"
+
+          [disabled]="
+            !form.nombre ||
+            form.nombre.length < 3 ||
+
+            !form.tipo ||
+
+            !form.ubicacion ||
+            form.ubicacion.length < 3 ||
+
+            form.latitud == null ||
+            form.latitud < -90 ||
+            form.latitud > 90 ||
+
+            form.longitud == null ||
+            form.longitud < -180 ||
+            form.longitud > 180
+          "
+
+          (click)="guardar()">
+
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+
+        </button>
+
       </div>
+
     </div>
+
   </div>
 
   <!-- TABLA -->
   <div class="table-container">
-    <div class="loading" *ngIf="cargando">Cargando...</div>
+
+    <div
+      class="loading"
+      *ngIf="cargando">
+
+      Cargando...
+
+    </div>
 
     <table *ngIf="!cargando && recursos.length > 0">
+
       <thead>
+
       <tr>
+
         <th>ID</th>
         <th>Nombre</th>
         <th>Tipo</th>
@@ -65,26 +294,75 @@
         <th>Latitud</th>
         <th>Longitud</th>
         <th>Acciones</th>
+
       </tr>
+
       </thead>
+
       <tbody>
+
       <tr *ngFor="let r of recursos">
+
         <td>{{ r.id }}</td>
-        <td>{{ r.nombre }}</td>
-        <td><span class="badge">{{ r.tipo }}</span></td>
-        <td>{{ r.ubicacion }}</td>
-        <td>{{ r.latitud }}</td>
-        <td>{{ r.longitud }}</td>
+
         <td>
-          <button class="btn-edit" (click)="editar(r)">✏️</button>
-          <button class="btn-delete" (click)="eliminar(r.id!)">🗑️</button>
+          {{ r.nombre }}
         </td>
+
+        <td>
+
+          <span class="badge">
+            {{ r.tipo }}
+          </span>
+
+        </td>
+
+        <td>
+          {{ r.ubicacion }}
+        </td>
+
+        <td>
+          {{ r.latitud }}
+        </td>
+
+        <td>
+          {{ r.longitud }}
+        </td>
+
+        <td>
+
+          <button
+            class="btn-edit"
+            (click)="editar(r)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="eliminar(r.id!)">
+
+            🗑️
+
+          </button>
+
+        </td>
+
       </tr>
+
       </tbody>
+
     </table>
 
-    <div class="empty" *ngIf="!cargando && recursos.length === 0">
+    <div
+      class="empty"
+      *ngIf="!cargando && recursos.length === 0">
+
       No hay recursos registrados aún.
+
     </div>
+
   </div>
+
 </div>

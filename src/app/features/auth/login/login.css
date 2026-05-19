@@ -138,3 +138,22 @@ button:disabled {
 .link a:hover {
   text-decoration: underline;
 }
+
+.field input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.input-error {
+  border: 2px solid #e53935 !important;
+  background-color: #fff5f5;
+}
+
+.error-text {
+  color: #e53935 !important;
+  font-size: 12px;
+  margin-top: 4px;
+}

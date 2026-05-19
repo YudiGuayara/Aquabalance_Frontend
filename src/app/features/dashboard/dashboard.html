@@ -40,6 +40,10 @@
         <span>📄</span> Informes
       </a>
 
+      <a routerLink="clima" routerLinkActive="active" class="nav-item">
+        <span>🌦️</span> Clima
+      </a>
+
       <!-- 🔥 ADMIN SOLO SI EXISTE USUARIO -->
       <ng-container *ngIf="esAdmin()">
         <p class="nav-section">Administración</p>

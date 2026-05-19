@@ -29,3 +29,20 @@ tr:hover td { background: #f7fafc; }
 .btn-edit:hover { background: #e6f7ff; }
 .btn-delete:hover { background: #fff5f5; }
 .loading, .empty { padding: 40px; text-align: center; color: #718096; font-size: 14px; }
+.error-text {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+  font-weight: 500;
+}
+
+.input-error {
+  border: 1px solid #dc2626 !important;
+  outline: none;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border: 1px solid #dc2626;
+}

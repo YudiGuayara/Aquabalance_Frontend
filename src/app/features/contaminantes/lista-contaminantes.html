@@ -1,122 +1,324 @@
 <div class="page">
 
+  <!-- HEADER -->
   <div class="page-header">
+
     <div>
       <h2>☣️ Contaminantes</h2>
       <p>Gestiona los contaminantes registrados en el sistema</p>
     </div>
-    <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo Contaminante</button>
+
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="abrirFormulario()">
+
+      + Nuevo Contaminante
+
+    </button>
+
   </div>
 
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <!-- ERROR GLOBAL -->
+  <div
+    class="error"
+    *ngIf="error && !mostrarFormulario">
+
+    {{ error }}
+
+  </div>
 
   <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario">
+
     <div class="modal">
 
-      <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Contaminante</h3>
+      <h3>
+        {{ modoEdicion ? 'Editar' : 'Nuevo' }} Contaminante
+      </h3>
 
       <!-- NOMBRE -->
       <div class="field">
+
         <label>Nombre *</label>
+
         <input
           type="text"
           [(ngModel)]="form.nombre"
-          required
-          minlength="3"
           placeholder="Ej: Plomo, Mercurio"
+          class="form-input"
+
+          [ngClass]="{
+            'input-error':
+              !form.nombre ||
+              (form.nombre && form.nombre.length < 3)
+          }"
         />
+
+        <small
+          class="error-text"
+          *ngIf="!form.nombre">
+
+          El nombre es obligatorio
+
+        </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.nombre && form.nombre.length < 3">
+
+          El nombre debe tener mínimo 3 caracteres
+
+        </small>
+
       </div>
 
       <!-- CARGA -->
       <div class="field">
+
         <label>Carga (mg/L) *</label>
+
         <input
           type="number"
           [(ngModel)]="form.carga"
-          required
           min="0"
+          step="0.1"
+          placeholder="Ej: 12.5"
+          class="form-input"
+
+          [ngClass]="{
+            'input-error':
+              form.carga == null ||
+              (form.carga != null && form.carga < 0)
+          }"
         />
+
+        <small
+          class="error-text"
+          *ngIf="form.carga == null">
+
+          La carga es obligatoria
+
+        </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.carga != null && form.carga < 0">
+
+          La carga no puede ser negativa
+
+        </small>
+
       </div>
 
       <!-- NIVEL -->
       <div class="field">
+
         <label>Nivel *</label>
-        <select [(ngModel)]="form.nivel" required>
-          <option [ngValue]="null">Seleccione nivel</option>
-          <option *ngFor="let n of niveles" [ngValue]="n">{{ n }}</option>
+
+        <select
+          [(ngModel)]="form.nivel"
+          class="form-input"
+
+          [ngClass]="{
+            'input-error': !form.nivel
+          }">
+
+          <option [ngValue]="null" disabled>
+            Seleccione nivel
+          </option>
+
+          <option
+            *ngFor="let n of niveles"
+            [ngValue]="n">
+
+            {{ n }}
+
+          </option>
+
         </select>
+
+        <small
+          class="error-text"
+          *ngIf="!form.nivel">
+
+          Debes seleccionar un nivel
+
+        </small>
+
       </div>
 
       <!-- FUENTE -->
       <div class="field">
+
         <label>Fuente de Origen *</label>
+
         <input
           type="text"
           [(ngModel)]="form.fuenteOrigen"
-          required
-          minlength="3"
           placeholder="Ej: Industria textil"
+          class="form-input"
+
+          [ngClass]="{
+            'input-error':
+              !form.fuenteOrigen ||
+              (form.fuenteOrigen && form.fuenteOrigen.length < 3)
+          }"
         />
+
+        <small
+          class="error-text"
+          *ngIf="!form.fuenteOrigen">
+
+          La fuente de origen es obligatoria
+
+        </small>
+
+        <small
+          class="error-text"
+          *ngIf="form.fuenteOrigen && form.fuenteOrigen.length < 3">
+
+          La fuente debe tener mínimo 3 caracteres
+
+        </small>
+
       </div>
 
+      <!-- BOTONES -->
       <div class="modal-actions">
-        <button class="btn-secondary" (click)="cerrarFormulario()">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cerrarFormulario()">
+
           Cancelar
+
         </button>
 
         <button
+          type="button"
           class="btn-primary"
-          (click)="guardar()"
-          [disabled]="!form.nombre || !form.carga || !form.nivel || !form.fuenteOrigen"
-        >
+
+          [disabled]="
+            !form.nombre ||
+            form.nombre.length < 3 ||
+
+            form.carga == null ||
+            form.carga < 0 ||
+
+            !form.nivel ||
+
+            !form.fuenteOrigen ||
+            form.fuenteOrigen.length < 3
+          "
+
+          (click)="guardar()">
+
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+
         </button>
+
       </div>
 
     </div>
+
   </div>
 
   <!-- TABLA -->
   <div class="table-container">
 
-    <div class="loading" *ngIf="cargando">Cargando...</div>
+    <div
+      class="loading"
+      *ngIf="cargando">
+
+      Cargando...
+
+    </div>
 
     <table *ngIf="!cargando && contaminantes.length > 0">
+
       <thead>
+
       <tr>
+
         <th>ID</th>
         <th>Nombre</th>
         <th>Carga</th>
         <th>Nivel</th>
         <th>Fuente</th>
         <th>Acciones</th>
+
       </tr>
+
       </thead>
 
       <tbody>
+
       <tr *ngFor="let c of contaminantes">
+
         <td>{{ c.id }}</td>
-        <td>{{ c.nombre }}</td>
-        <td>{{ c.carga }} mg/L</td>
+
         <td>
-          <span class="badge" [ngClass]="nivelColor(c.nivel)">
+          {{ c.nombre }}
+        </td>
+
+        <td>
+          {{ c.carga }} mg/L
+        </td>
+
+        <td>
+
+          <span
+            class="badge"
+            [ngClass]="nivelColor(c.nivel)">
+
             {{ c.nivel }}
+
           </span>
+
         </td>
-        <td>{{ c.fuenteOrigen }}</td>
+
         <td>
-          <button class="btn-edit" (click)="editar(c)">✏️</button>
-          <button class="btn-delete" (click)="eliminar(c.id!)">🗑️</button>
+          {{ c.fuenteOrigen }}
         </td>
+
+        <td>
+
+          <button
+            class="btn-edit"
+            (click)="editar(c)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="eliminar(c.id!)">
+
+            🗑️
+
+          </button>
+
+        </td>
+
       </tr>
+
       </tbody>
 
     </table>
 
-    <div class="empty" *ngIf="!cargando && contaminantes.length === 0">
+    <div
+      class="empty"
+      *ngIf="!cargando && contaminantes.length === 0">
+
       No hay contaminantes registrados aún.
+
     </div>
 
   </div>
+
 </div>
