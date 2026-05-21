@@ -56,7 +56,14 @@ export const dashboardRoutes: Routes = [
         loadComponent: () =>
           import('../clima/clima.component')
             .then(m => m.ClimaComponent),
-      }
+      },
+
+    {
+      path: 'reportes',
+      loadComponent: () =>
+        import('../reportes/lista-informes')
+          .then(m => m.ListaInformesComponent),
+    },
 
     ]
   }
