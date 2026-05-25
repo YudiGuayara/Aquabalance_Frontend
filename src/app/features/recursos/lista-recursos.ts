@@ -9,7 +9,7 @@ import { Recurso, TipoRecurso } from '../../core/models/recurso.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './lista-recursos.html',
-  styleUrl: './lista-recursos.css',
+  styleUrls: ['./lista-recursos.css'],
 })
 export class ListaRecursosComponent implements OnInit {
 
@@ -32,18 +32,26 @@ export class ListaRecursosComponent implements OnInit {
   // CARGAR
   // =========================
   cargarRecursos(): void {
+
     this.cargando = true;
+    this.error = '';
 
     this.recursoService.listar().subscribe({
+
       next: (data) => {
         this.recursos = data || [];
         this.cargando = false;
       },
-      error: () => {
+
+      error: (err) => {
+        console.error(err);
+
         this.error = 'Error al cargar recursos';
         this.recursos = [];
+
         this.cargando = false;
-      },
+      }
+
     });
   }
 

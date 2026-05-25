@@ -6,13 +6,16 @@
 .btn-primary:hover { background: #005f8e; }
 .btn-secondary { background: #e2e8f0; color: #4a5568; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; }
 .error { background: #fff5f5; color: #c53030; padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #fed7d7; }
+.filtros { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; background: white; padding: 14px 20px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.filtros label { font-size: 13px; font-weight: 600; color: #4a5568; }
+.filtros select { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; }
 .modal { background: white; border-radius: 12px; padding: 28px; width: 480px; max-width: 95vw; }
 .modal h3 { font-size: 18px; color: #1a3c5e; margin-bottom: 20px; }
 .field { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
 .field label { font-size: 13px; font-weight: 600; color: #4a5568; }
-.field input, .field select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; }
-.field input:focus, .field select:focus { border-color: #0077b6; }
+.field input, .field select, .field textarea { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: #0077b6; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
 .table-container { background: white; border-radius: 12px ; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 table { width: 100%; border-collapse: collapse; }
@@ -25,24 +28,39 @@ tr:hover td { background: #f7fafc; }
 .badge-amarillo { background: #fffbeb; color: #b7791f; }
 .badge-naranja { background: #fff3e0; color: #c05621; }
 .badge-rojo { background: #fff5f5; color: #c53030; }
-.btn-edit, .btn-delete { border: none; background: none; cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 6px; }
-.btn-edit:hover { background: #e6f7ff; }
+.btn-delete { border: none; background: none; cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 6px; }
 .btn-delete:hover { background: #fff5f5; }
 .loading, .empty { padding: 40px; text-align: center; color: #718096; font-size: 14px; }
-.error-text {
-  color: #dc2626;
-  font-size: 13px;
-  margin-top: 4px;
-  display: block;
-  font-weight: 500;
+.nivel-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.badge-verde {
+  background: #22c55e;
+}
+
+.badge-amarillo {
+  background: #facc15;
+}
+
+.badge-naranja {
+  background: #f97316;
+}
+
+.badge-rojo {
+  background: #ef4444;
 }
 
 .input-error {
-  border: 1px solid #dc2626 !important;
-  outline: none;
+  border: 1px solid #e53935 !important;
 }
 
-input.ng-invalid.ng-touched,
-select.ng-invalid.ng-touched {
-  border: 1px solid #dc2626;
+.error-text {
+  color: #e53935;
+  font-size: 12px;
+  margin-top: 4px;
 }

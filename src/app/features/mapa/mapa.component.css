@@ -1,0 +1,166 @@
+.geo-wrapper {
+  padding: 15px 20px;
+}
+
+/* HEADER */
+.geo-header {
+  margin-bottom: 15px;
+}
+
+.geo-header h1 {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 5px;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.geo-header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* BUSCADOR */
+.geo-search {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.geo-search input {
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  font-size: 14px;
+  outline: none;
+}
+
+.geo-search input:focus {
+  border-color: #0ea5e9;
+}
+
+.geo-search button {
+  background: linear-gradient(
+    135deg,
+    #0ea5e9,
+    #0284c7
+  );
+
+  color: white;
+  border: none;
+  padding: 0 24px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.geo-search button:hover {
+  transform: translateY(-2px);
+}
+
+/* ESTADÍSTICAS */
+.geo-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+.stat:hover {
+  transform: translateY(-3px);
+}
+
+.stat h2 {
+  font-size: 34px;
+  margin: 0 0 5px;
+}
+
+.stat p {
+  color: #64748b;
+  margin: 0;
+  font-size: 14px;
+}
+
+.green h2 {
+  color: #22c55e;
+}
+
+.orange h2 {
+  color: #f59e0b;
+}
+
+.red h2 {
+  color: #ef4444;
+}
+
+/* MAPA */
+#map {
+  width: 100%;
+  height: 520px;
+  border-radius: 22px;
+  overflow: hidden;
+  z-index: 1;
+
+  box-shadow:
+    0 15px 30px rgba(0,0,0,0.06);
+}
+
+/* POPUP */
+.popup h3 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 16px;
+}
+
+.popup p {
+  margin: 3px 0;
+  color: #334155;
+  font-size: 13px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+
+  .geo-stats {
+    grid-template-columns: 1fr;
+  }
+
+  #map {
+    height: 450px;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .geo-wrapper {
+    padding: 10px;
+  }
+
+  .geo-header h1 {
+    font-size: 24px;
+  }
+
+  .geo-search {
+    flex-direction: column;
+  }
+
+  .geo-search button {
+    height: 48px;
+  }
+
+  #map {
+    height: 350px;
+  }
+}

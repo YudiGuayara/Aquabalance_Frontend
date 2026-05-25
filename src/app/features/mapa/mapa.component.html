@@ -1,0 +1,62 @@
+<div class="geo-wrapper">
+
+  <!-- HEADER -->
+  <div class="geo-header">
+
+    <h1>🌎 Centro Geoespacial AquaBalance</h1>
+
+    <p>
+      Monitoreo hídrico inteligente, contaminación ambiental,
+      clima y recursos en tiempo real.
+    </p>
+
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="geo-search">
+
+    <input
+      type="text"
+      [(ngModel)]="busqueda"
+      placeholder="Buscar río, ciudad, lago o ubicación..."
+    />
+
+    <button (click)="buscarLugar()">
+      🔎 Buscar
+    </button>
+
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="geo-stats">
+
+    <div class="stat green">
+
+      <h2>{{ recursosEstables }}</h2>
+
+      <p>🟢 Recursos estables</p>
+
+    </div>
+
+    <div class="stat orange">
+
+      <h2>{{ riesgoMedio }}</h2>
+
+      <p>🟠 Riesgo medio</p>
+
+    </div>
+
+    <div class="stat red">
+
+      <h2>{{ contaminacionCritica }}</h2>
+
+      <p>🔴 Contaminación crítica</p>
+
+    </div>
+
+  </div>
+
+  <!-- MAPA -->
+  <div id="map"></div>
+
+</div>

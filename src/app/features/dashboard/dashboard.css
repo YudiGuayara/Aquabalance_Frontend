@@ -79,7 +79,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-width: 0;
 }
 
 /* TOPBAR */
@@ -136,6 +136,296 @@
 /* CONTENT */
 .content {
   flex: 1;
-  overflow-y: auto;
   padding: 28px;
+  min-width: 0;
+}
+
+/* ══════════════════════════════════════════════════
+   CAMPANITA DE NOTIFICACIONES
+══════════════════════════════════════════════════ */
+
+.notif-trigger {
+  position: relative;
+}
+
+/* Botón campana */
+.btn-campana {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f7fafc;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-campana:hover,
+.btn-campana.activa {
+  border-color: #0077b6;
+  color: #0077b6;
+  background: #e6f7ff;
+}
+
+/* Animación balanceo cuando hay no leídas */
+.btn-campana:has(.campana-badge) svg {
+  animation: bell-swing 4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes bell-swing {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  84%  { transform: rotate(14deg); }
+  88%  { transform: rotate(-11deg); }
+  92%  { transform: rotate(6deg); }
+  96%  { transform: rotate(-3deg); }
+}
+
+/* Badge contador */
+.campana-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #e53e3e;
+  color: white;
+  font-size: 0.58rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+             badge-pulse 3s ease-in-out 1s infinite;
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(229, 62, 62, 0); }
+}
+
+/* Panel desplegable */
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 360px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.notif-panel.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* Línea de color superior */
+.notif-panel::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #0077b6, #63d3ff);
+}
+
+/* Header del panel */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.panel-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.btn-marcar-todas {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0077b6;
+  background: transparent;
+  border: 1px solid #bee3f8;
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.btn-marcar-todas:hover:not(:disabled) {
+  background: #0077b6;
+  color: white;
+  border-color: #0077b6;
+}
+
+.btn-marcar-todas:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Lista */
+.panel-lista {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.panel-lista::-webkit-scrollbar { width: 4px; }
+.panel-lista::-webkit-scrollbar-track { background: transparent; }
+.panel-lista::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+
+/* Item */
+.panel-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.panel-item:last-child { border-bottom: none; }
+.panel-item:hover { background: #f7fafc; }
+
+.panel-item.no-leida {
+  background: #f0f9ff;
+  border-left: 3px solid #0077b6;
+}
+
+.panel-item.no-leida:hover { background: #e6f4fd; }
+
+/* Punto azul de no leído */
+.pi-dot {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0077b6;
+  box-shadow: 0 0 5px rgba(0, 119, 182, 0.5);
+}
+
+.pi-icono {
+  font-size: 16px;
+  min-width: 22px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.pi-body { flex: 1; min-width: 0; }
+
+.pi-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+
+.pi-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 175px;
+}
+
+.pi-msg {
+  font-size: 12px;
+  color: #718096;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin: 0 0 3px;
+}
+
+.pi-fecha {
+  font-size: 11px;
+  color: #a0aec0;
+}
+
+/* Badges de nivel */
+.pi-nivel {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.nv-alta  { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
+.nv-media { background: #fffaf0; color: #c05621; border: 1px solid #feebc8; }
+.nv-baja  { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
+.nv-info  { background: #e6f7ff; color: #0077b6; border: 1px solid #bee3f8; }
+
+/* Vacío */
+.panel-vacio {
+  text-align: center;
+  padding: 40px 16px;
+  color: #a0aec0;
+}
+
+.panel-vacio span {
+  font-size: 28px;
+  opacity: 0.4;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.panel-vacio p { font-size: 13px; }
+
+/* Footer */
+.panel-footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  background: #f7fafc;
+}
+
+.btn-ver-todas {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0077b6;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+  text-align: center;
+}
+
+.btn-ver-todas:hover { color: #023e8a; }
+
+.nav-item {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }

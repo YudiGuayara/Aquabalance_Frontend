@@ -1,1 +1,61 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'leaflet/dist/leaflet.css';
+
+.notif-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: slide-in 0.3s ease;
+  max-width: 380px;
+  color: white;
+}
+
+.notif-toast + .notif-toast {
+  bottom: 100px;
+}
+
+.notif-toast.notif-alta { background: #c53030; }
+.notif-toast.notif-media { background: #c05621; }
+.notif-toast.notif-baja { background: #276749; }
+.notif-toast.notif-info { background: #0077b6; }
+
+.notif-toast-icon { font-size: 22px; flex-shrink: 0; }
+
+.notif-toast-body { flex: 1; }
+
+.notif-toast-titulo {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.notif-toast-msg {
+  font-size: 13px;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.notif-toast-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.7;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.notif-toast-close:hover { opacity: 1; }
+
+@keyframes slide-in {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

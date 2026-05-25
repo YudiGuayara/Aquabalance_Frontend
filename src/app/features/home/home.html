@@ -1,0 +1,69 @@
+<div class="home">
+
+  <div class="bienvenida">
+    <div class="bienvenida-texto">
+      <h1>{{ saludo() }}, {{ usuario?.nombre }} 👋</h1>
+      <p>Bienvenido al sistema de gestión y monitoreo de recursos hídricos AquaBalance.</p>
+    </div>
+    <div class="bienvenida-rol">
+      <span class="rol-badge">{{ usuario?.rol }}</span>
+    </div>
+  </div>
+
+  <div class="resumen-grid" *ngIf="!cargando">
+    <a routerLink="../recursos" class="resumen-card azul">
+      <div class="resumen-icono">🏞️</div>
+      <div class="resumen-numero">{{ totalRecursos }}</div>
+      <div class="resumen-label">Recursos Hídricos</div>
+    </a>
+
+    <a routerLink="../mediciones" class="resumen-card verde">
+      <div class="resumen-icono">📊</div>
+      <div class="resumen-numero">{{ totalMediciones }}</div>
+      <div class="resumen-label">Mediciones</div>
+    </a>
+
+    <a routerLink="../eventos" class="resumen-card naranja">
+      <div class="resumen-icono">🚨</div>
+      <div class="resumen-numero">{{ totalEventos }}</div>
+      <div class="resumen-label">Eventos</div>
+    </a>
+
+    <a routerLink="../alertas" class="resumen-card rojo">
+      <div class="resumen-icono">⚠️</div>
+      <div class="resumen-numero">{{ totalAlertas }}</div>
+      <div class="resumen-label">Alertas</div>
+    </a>
+  </div>
+
+  <div class="accesos-rapidos">
+    <h3>Accesos rápidos</h3>
+    <div class="accesos-grid">
+      <a routerLink="../mediciones" class="acceso-card">
+        <span>📊</span>
+        <span>Nueva Medición</span>
+      </a>
+      <a routerLink="../eventos" class="acceso-card">
+        <span>🚨</span>
+        <span>Ver Eventos</span>
+      </a>
+      <a routerLink="../alertas" class="acceso-card">
+        <span>⚠️</span>
+        <span>Ver Alertas</span>
+      </a>
+      <a routerLink="../reportes" class="acceso-card">
+        <span>📄</span>
+        <span>Reportes</span>
+      </a>
+      <a routerLink="../clima" class="acceso-card">
+        <span>🌤️</span>
+        <span>Clima</span>
+      </a>
+      <a routerLink="../contaminantes" class="acceso-card">
+        <span>☣️</span>
+        <span>Contaminantes</span>
+      </a>
+    </div>
+  </div>
+
+</div>

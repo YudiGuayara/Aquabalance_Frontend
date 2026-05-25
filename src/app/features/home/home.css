@@ -1,0 +1,109 @@
+.home { max-width: 1100px; }
+
+.bienvenida {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #0077b6, #023e8a);
+  border-radius: 16px;
+  padding: 32px;
+  color: white;
+  margin-bottom: 28px;
+}
+
+.bienvenida h1 {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.bienvenida p {
+  opacity: 0.85;
+  font-size: 15px;
+  margin: 0;
+}
+
+.rol-badge {
+  background: rgba(255,255,255,0.2);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.resumen-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: white;
+}
+
+.resumen-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.resumen-card.azul { background: #0077b6; }
+.resumen-card.verde { background: #2d6a4f; }
+.resumen-card.naranja { background: #c05621; }
+.resumen-card.rojo { background: #c53030; }
+
+.resumen-icono { font-size: 32px; margin-bottom: 12px; }
+.resumen-numero { font-size: 42px; font-weight: 700; line-height: 1; }
+.resumen-label { font-size: 13px; opacity: 0.9; margin-top: 6px; }
+
+.accesos-rapidos h3 {
+  font-size: 16px;
+  color: #1a3c5e;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.accesos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.acceso-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: all 0.2s;
+  border: 1px solid #e2e8f0;
+}
+
+.acceso-card:hover {
+  background: #e6f7ff;
+  border-color: #0077b6;
+  color: #0077b6;
+  transform: translateY(-2px);
+}
+
+.acceso-card span:first-child { font-size: 24px; }
+
+@media (max-width: 768px) {
+  .resumen-grid { grid-template-columns: repeat(2, 1fr); }
+  .bienvenida { flex-direction: column; gap: 16px; text-align: center; }
+}

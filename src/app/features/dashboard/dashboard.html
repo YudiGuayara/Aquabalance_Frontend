@@ -1,6 +1,5 @@
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
 
     <div class="sidebar-brand">
@@ -10,44 +9,43 @@
 
     <nav class="sidebar-nav">
 
-      <p class="nav-section">Monitoreo</p>
+      <p class="nav-section">Inicio</p>
+      <a routerLink="home" routerLinkActive="active" class="nav-item">
+        <span>🏠</span> Inicio
+      </a>
 
+      <p class="nav-section">Monitoreo</p>
       <a routerLink="recursos" routerLinkActive="active" class="nav-item">
         <span>🏞️</span> Recursos
       </a>
-
       <a routerLink="contaminantes" routerLinkActive="active" class="nav-item">
         <span>☣️</span> Contaminantes
       </a>
-
       <a routerLink="mediciones" routerLinkActive="active" class="nav-item">
         <span>📊</span> Mediciones
       </a>
 
       <p class="nav-section">Alertas</p>
-
       <a routerLink="eventos" routerLinkActive="active" class="nav-item">
         <span>🚨</span> Eventos
       </a>
-
       <a routerLink="alertas" routerLinkActive="active" class="nav-item">
         <span>⚠️</span> Alertas
       </a>
 
       <p class="nav-section">Reportes</p>
-
       <a routerLink="reportes" routerLinkActive="active" class="nav-item">
         <span>📄</span> Informes
       </a>
-
       <a routerLink="clima" routerLinkActive="active" class="nav-item">
         <span>🌦️</span> Clima
       </a>
+      <a routerLink="mapa" routerLinkActive="active" class="nav-item">
+        <span>🗺️</span> Mapa
+      </a>
 
-      <!-- 🔥 ADMIN SOLO SI EXISTE USUARIO -->
       <ng-container *ngIf="esAdmin()">
         <p class="nav-section">Administración</p>
-
         <a routerLink="usuarios" routerLinkActive="active" class="nav-item">
           <span>👥</span> Usuarios
         </a>
@@ -57,43 +55,82 @@
 
   </aside>
 
-  <!-- MAIN -->
   <div class="main">
 
-    <!-- TOPBAR -->
     <header class="topbar">
-
       <div class="topbar-left">
         <h2>Sistema de Monitoreo Hídrico</h2>
       </div>
 
       <div class="topbar-right">
 
-        <!-- 🔥 evita crash si usuario aún no carga -->
-        <span class="usuario-nombre">
-          {{ usuario?.nombre || 'Usuario' }}
-        </span>
+        <div class="notif-trigger">
+          <button class="btn-campana" (click)="togglePanel()" [class.activa]="panelAbierto">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="campana-badge" *ngIf="(noLeidas$ | async)! > 0">
+              {{ (noLeidas$ | async)! > 99 ? '99+' : (noLeidas$ | async) }}
+            </span>
+          </button>
 
-        <span class="usuario-rol">
-          {{ usuario?.rol || '' }}
-        </span>
+          <div class="notif-panel" [class.visible]="panelAbierto">
+            <div class="panel-header">
+              <span class="panel-titulo">Notificaciones</span>
+              <button class="btn-marcar-todas"
+                      (click)="marcarTodasLeidas()"
+                      [disabled]="(noLeidas$ | async) === 0">
+                Marcar leídas
+              </button>
+            </div>
 
-        <button class="btn-logout" (click)="logout()">
-          Salir
-        </button>
+            <div class="panel-lista" *ngIf="notificaciones$ | async as lista">
+              <ng-container *ngIf="lista.length > 0; else sinNotif">
+                <div class="panel-item"
+                     *ngFor="let n of lista.slice(0, 8)"
+                     [class.no-leida]="!n.leida"
+                     (click)="marcarLeida(n.id, $event)">
+                  <span class="pi-icono">{{ iconoPorTipo(n.tipo) }}</span>
+                  <div class="pi-body">
+                    <div class="pi-top">
+                      <span class="pi-titulo">{{ n.titulo }}</span>
+                      <span class="pi-nivel" [ngClass]="clasePorNivel(n.nivel)">{{ n.nivel }}</span>
+                    </div>
+                    <p class="pi-msg">{{ n.mensaje }}</p>
+                    <span class="pi-fecha">{{ formatearFecha(n.fecha) }}</span>
+                  </div>
+                  <div class="pi-dot" *ngIf="!n.leida"></div>
+                </div>
+              </ng-container>
+
+              <ng-template #sinNotif>
+                <div class="panel-vacio">
+                  <span>💧</span>
+                  <p>Sin notificaciones</p>
+                </div>
+              </ng-template>
+            </div>
+
+            <div class="panel-footer">
+              <button class="btn-ver-todas" (click)="verTodas()">
+                Ver todas las notificaciones →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <span class="usuario-nombre">{{ usuario?.nombre || 'Usuario' }}</span>
+        <span class="usuario-rol">{{ usuario?.rol || '' }}</span>
+        <button class="btn-logout" (click)="logout()">Salir</button>
 
       </div>
-
     </header>
 
-    <!-- CONTENIDO HIJOS -->
     <main class="content">
-
-      <!-- 🔥 ESTO ES OBLIGATORIO -->
       <router-outlet></router-outlet>
-
     </main>
 
   </div>
-
 </div>

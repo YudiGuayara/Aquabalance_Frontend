@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "agroruta-frontend": {
+    "aquabalance-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "agroruta-frontend:build:production"
+              "buildTarget": "aquabalance-frontend:build:production"
             },
             "development": {
-              "buildTarget": "agroruta-frontend:build:development"
+              "buildTarget": "aquabalance-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
