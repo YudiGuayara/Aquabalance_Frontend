@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../../core/guards/auth-guard';
+import { authGuard }  from '../../core/guards/auth-guard';
+import { adminGuard } from '../../core/guards/admin-guard';
 import { DashboardComponent } from './dashboard';
 import { MapaComponent } from '../mapa/mapa.component';
 
@@ -9,11 +10,7 @@ export const dashboardRoutes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full',
-      },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
       {
         path: 'home',
         loadComponent: () =>
@@ -63,6 +60,14 @@ export const dashboardRoutes: Routes = [
         loadComponent: () =>
           import('../notificaciones/lista-notificaciones')
             .then(m => m.ListaNotificacionesComponent),
+      },
+      // ── NUEVO ──────────────────────────────────────────────
+      {
+        path: 'usuarios',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('../usuarios/lista-usuarios')
+            .then(m => m.ListaUsuariosComponent),
       },
     ],
   },

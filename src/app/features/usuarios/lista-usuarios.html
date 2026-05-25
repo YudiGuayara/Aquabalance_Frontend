@@ -1,0 +1,155 @@
+<div class="usuarios-page">
+
+  <!-- Cabecera -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">👥 Gestión de Usuarios</h1>
+      <p class="page-sub">Administra los usuarios del sistema</p>
+    </div>
+    <button class="btn-primary" (click)="abrirCrear()">＋ Nuevo usuario</button>
+  </div>
+
+  <!-- Error global -->
+  <div class="alert-error" *ngIf="error && !modalAbierto">{{ error }}</div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input
+      class="input-busqueda"
+      type="text"
+      placeholder="🔍 Buscar por nombre, email o rol…"
+      [(ngModel)]="busqueda"
+    />
+    <span class="total-badge">{{ usuariosFiltrados.length }} usuarios</span>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="cargando">
+    <span class="spinner"></span> Cargando usuarios…
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-wrapper" *ngIf="!cargando">
+    <table class="tabla">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Fecha creación</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let u of usuariosFiltrados">
+        <td class="td-id">{{ u.id }}</td>
+        <td class="td-nombre">
+          <div class="avatar">{{ inicial(u.nombre) }}</div>
+          <span>{{ u.nombre }}</span>
+        </td>
+        <td class="td-email">{{ u.email }}</td>
+        <td>
+          <span class="badge" [ngClass]="badgeRol(u.rol)">{{ u.rol }}</span>
+        </td>
+        <td>
+            <span class="estado-chip" [ngClass]="u.activo ? 'chip-activo' : 'chip-inactivo'">
+              {{ u.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+        </td>
+        <td class="td-fecha">
+          {{ u.fechaCreacion ? (u.fechaCreacion | date:'dd MMM yyyy') : '—' }}
+        </td>
+        <td class="td-acciones">
+          <button class="btn-icon"
+                  title="Editar"
+                  (click)="abrirEditar(u)">✏️</button>
+          <button class="btn-icon"
+                  [title]="u.activo ? 'Desactivar' : 'Activar'"
+                  (click)="toggleActivo(u)">
+            {{ u.activo ? '🔒' : '🔓' }}
+          </button>
+          <button class="btn-icon danger"
+                  title="Eliminar"
+                  (click)="eliminar(u.id!)">🗑️</button>
+        </td>
+      </tr>
+      <tr *ngIf="usuariosFiltrados.length === 0">
+        <td colspan="7" class="td-vacio">
+          <span>👤</span>
+          <p>No hay usuarios que coincidan con la búsqueda.</p>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Modal crear / editar ── -->
+  <div class="modal-overlay" *ngIf="modalAbierto" (click)="cerrarModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2>{{ modoEdicion ? '✏️ Editar usuario' : '➕ Nuevo usuario' }}</h2>
+        <button class="btn-cerrar" (click)="cerrarModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Error dentro del modal -->
+        <div class="alert-error" *ngIf="error">{{ error }}</div>
+
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text"
+                 [(ngModel)]="usuarioForm.nombre"
+                 placeholder="Ej: Juan Pérez" />
+        </div>
+
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email"
+                 [(ngModel)]="usuarioForm.email"
+                 placeholder="correo@ejemplo.com" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            Contraseña
+            <span class="label-hint" *ngIf="modoEdicion">
+              (dejar vacío para no cambiar)
+            </span>
+          </label>
+          <input type="password"
+                 [(ngModel)]="usuarioForm.password"
+                 placeholder="••••••••" />
+        </div>
+
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="usuarioForm.rol">
+            <option value="Administrador">Administrador</option>
+            <option value="Operador">Operador</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="label-check">
+            <input type="checkbox" [(ngModel)]="usuarioForm.activo" />
+            <span>Usuario activo</span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-primary"   (click)="guardar()">
+          {{ modoEdicion ? 'Guardar cambios' : 'Crear usuario' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
