@@ -6,169 +6,90 @@
       <h2>📄 Reportes e Informes</h2>
       <p>Estadísticas y consolidado del sistema AquaBalance</p>
     </div>
-
     <div class="header-actions">
-
       <button class="btn-tab"
               (click)="vistaActual = 'informes'"
               [class.active]="vistaActual === 'informes'">
         📋 Informes
       </button>
-
       <button class="btn-tab"
               (click)="vistaActual = 'estadisticas'"
               [class.active]="vistaActual === 'estadisticas'">
         📊 Estadísticas
       </button>
-
-      <button class="btn-pdf"
-              (click)="exportarPDF()">
-        🖨️ PDF
-      </button>
-
-      <!-- SOLO ADMIN Y OPERADOR -->
-      <button class="btn-primary"
-              *ngIf="!esPublico"
-              (click)="abrirFormulario()">
-        + Nuevo
-      </button>
-
+      <button class="btn-pdf" (click)="exportarPDF()">🖨️ PDF</button>
+      <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo</button>
     </div>
   </div>
 
   <!-- ERROR GLOBAL -->
-  <div class="error-msg" *ngIf="error">
-    {{ error }}
-  </div>
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
 
   <!-- MODAL -->
   <div class="modal-overlay" *ngIf="mostrarFormulario">
     <div class="modal">
+      <h3>{{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}</h3>
 
-      <h3>
-        {{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}
-      </h3>
-
-      <div class="error-msg"
-           *ngIf="errorModal"
-           style="margin-bottom:16px">
-
+      <div class="error-msg" *ngIf="errorModal" style="margin-bottom:16px">
         {{ errorModal }}
-
       </div>
 
       <div class="field">
         <label>📝 Título</label>
-
-        <input type="text"
-               [(ngModel)]="form.titulo"
-               placeholder="Ej: Informe Mayo 2026" />
+        <input type="text" [(ngModel)]="form.titulo" placeholder="Ej: Informe Mayo 2026" />
       </div>
 
       <div class="field">
         <label>📄 Descripción</label>
-
         <textarea [(ngModel)]="form.descripcion"
-                  placeholder="Descripción del informe..."
-                  rows="3">
-        </textarea>
+                  placeholder="Descripción del informe..." rows="3"></textarea>
       </div>
 
       <div class="field">
         <label>💧 Recurso Hídrico</label>
-
         <div class="select-box">
-
           <select [(ngModel)]="form.recursoId">
-
-            <option [ngValue]="0" disabled>
-              Seleccionar recurso
-            </option>
-
-            <option *ngFor="let r of recursos"
-                    [ngValue]="r.id">
-
-              {{ r.nombre }}
-
-            </option>
-
+            <option [ngValue]="0" disabled>Seleccionar recurso</option>
+            <option *ngFor="let r of recursos" [ngValue]="r.id">{{ r.nombre }}</option>
           </select>
-
         </div>
       </div>
 
       <div class="field">
         <label>🧪 Contaminante</label>
-
         <div class="select-box">
-
           <select [(ngModel)]="form.contaminanteId">
-
-            <option [ngValue]="0" disabled>
-              Seleccionar contaminante
-            </option>
-
-            <option *ngFor="let c of contaminantes"
-                    [ngValue]="c.id">
-
-              {{ c.nombre }}
-
-            </option>
-
+            <option [ngValue]="0" disabled>Seleccionar contaminante</option>
+            <option *ngFor="let c of contaminantes" [ngValue]="c.id">{{ c.nombre }}</option>
           </select>
-
         </div>
       </div>
 
       <div class="field">
         <label>📅 Fecha Inicio</label>
-
-        <input type="datetime-local"
-               [(ngModel)]="form.fechaInicio" />
+        <input type="datetime-local" [(ngModel)]="form.fechaInicio" />
       </div>
 
       <div class="field">
         <label>📅 Fecha Fin</label>
-
-        <input type="datetime-local"
-               [(ngModel)]="form.fechaFin" />
+        <input type="datetime-local" [(ngModel)]="form.fechaFin" />
       </div>
 
       <div class="modal-actions">
-
-        <button class="btn-secondary"
-                (click)="cerrarFormulario()">
-
-          Cancelar
-
-        </button>
-
-        <button class="btn-primary"
-                (click)="guardar()">
-
+        <button class="btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
+        <button class="btn-primary" (click)="guardar()">
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
-
         </button>
-
       </div>
     </div>
   </div>
 
   <!-- VISTA: LISTA DE INFORMES -->
   <div *ngIf="vistaActual === 'informes'">
-
-    <h3 class="seccion-titulo">
-      Lista de Informes
-    </h3>
-
+    <h3 class="seccion-titulo">Lista de Informes</h3>
     <div class="table-container">
-
-      <div class="loading" *ngIf="cargando">
-        Cargando...
-      </div>
-
+      <div class="loading" *ngIf="cargando">Cargando...</div>
       <table *ngIf="!cargando && informes.length > 0">
-
         <thead>
         <tr>
           <th>ID</th>
@@ -180,153 +101,319 @@
           <th>Acciones</th>
         </tr>
         </thead>
-
         <tbody>
-
         <tr *ngFor="let i of informes">
-
           <td>{{ i.id }}</td>
-
           <td>{{ i.titulo }}</td>
-
           <td>{{ i.nombreRecurso }}</td>
-
           <td>{{ i.nombreContaminante }}</td>
-
           <td>
-            {{ i.fechaInicio | date:'dd/MM/yy' }}
-            →
+            {{ i.fechaInicio | date:'dd/MM/yy' }} →
             {{ i.fechaFin | date:'dd/MM/yy' }}
           </td>
-
+          <td>{{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</td>
           <td>
-            {{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}
-          </td>
-
-          <td>
-
             <div class="acciones">
-
-              <button class="btn-stats"
-                      (click)="verEstadisticas(i.id!)">
+              <button class="btn-stats" (click)="verEstadisticas(i.id!)">
                 📊 Ver stats
               </button>
-
-              <!-- SOLO ADMIN Y OPERADOR -->
-              <button class="btn-secondary btn-sm"
-                      *ngIf="!esPublico"
-                      (click)="abrirEdicion(i)">
-                ✏️
-              </button>
-
-              <!-- SOLO ADMIN Y OPERADOR -->
-              <button class="btn-delete"
-                      *ngIf="!esPublico"
-                      (click)="eliminar(i.id!)">
-                🗑️
-              </button>
-
+              <button class="btn-secondary btn-sm" (click)="abrirEdicion(i)">✏️</button>
+              <button class="btn-delete" (click)="eliminar(i.id!)">🗑️</button>
             </div>
-
           </td>
-
         </tr>
-
         </tbody>
-
       </table>
-
-      <div class="empty"
-           *ngIf="!cargando && informes.length === 0">
-
+      <div class="empty" *ngIf="!cargando && informes.length === 0">
         No hay informes registrados aún.
-
       </div>
-
     </div>
   </div>
 
   <!-- VISTA: ESTADÍSTICAS -->
   <div *ngIf="vistaActual === 'estadisticas'">
 
-    <div class="loading" *ngIf="cargandoDetalle">
-      Cargando estadísticas...
-    </div>
+    <div class="loading" *ngIf="cargandoDetalle">Cargando estadísticas...</div>
 
     <ng-container *ngIf="!cargandoDetalle && informeDetalle">
 
       <!-- Selector de informe -->
       <div class="field selector-informe">
-
-        <label>
-          Selecciona un informe:
-        </label>
-
+        <label>Selecciona un informe:</label>
         <div class="select-box" style="flex:1">
-
           <select (change)="onCambiarInforme($event)">
-
             <option *ngFor="let i of informes"
                     [value]="i.id"
                     [selected]="i.id === informeSeleccionadoId">
-
-              {{ i.titulo }}
-              —
-              {{ i.nombreRecurso }}
-              ·
-              {{ i.nombreContaminante }}
-
+              {{ i.titulo }} — {{ i.nombreRecurso }} · {{ i.nombreContaminante }}
             </option>
-
           </select>
-
         </div>
       </div>
 
       <!-- Cabecera del informe -->
       <div class="informe-cabecera">
-
         <div class="informe-cabecera-left">
-
           <h3>{{ informeDetalle.titulo }}</h3>
-
-          <p *ngIf="informeDetalle.descripcion">
-            {{ informeDetalle.descripcion }}
-          </p>
-
+          <p *ngIf="informeDetalle.descripcion">{{ informeDetalle.descripcion }}</p>
           <p class="informe-periodo">
-
-            📅
-            {{ informeDetalleFechas.inicio | date:'dd/MM/yyyy HH:mm' }}
-            →
-            {{ informeDetalleFechas.fin | date:'dd/MM/yyyy HH:mm' }}
-
+            📅 {{ informeDetalleFechas.inicio | date:'dd/MM/yyyy HH:mm' }}
+            → {{ informeDetalleFechas.fin | date:'dd/MM/yyyy HH:mm' }}
           </p>
-
         </div>
-
         <div class="informe-cabecera-right">
-
-          <span class="informe-recurso-badge">
-            💧 {{ informeDetalle.nombreRecurso }}
-          </span>
-
-          <span class="informe-contaminante-badge">
-            🧪 {{ informeDetalle.nombreContaminante }}
-          </span>
-
+          <span class="informe-recurso-badge">💧 {{ informeDetalle.nombreRecurso }}</span>
+          <span class="informe-contaminante-badge">🧪 {{ informeDetalle.nombreContaminante }}</span>
         </div>
-
       </div>
 
+      <!-- SCORE DE CALIDAD GLOBAL -->
+      <ng-container *ngIf="scoreCalidad as sc">
+        <div class="score-card" [ngClass]="scoreCircleClase(sc.clasificacion)">
+          <div class="score-circle-wrap">
+            <div class="score-circle">
+              <span class="score-num">{{ sc.score }}</span>
+              <span class="score-sub">/ 100</span>
+            </div>
+          </div>
+          <div class="score-content">
+            <div class="score-title">Calidad hídrica: {{ sc.clasificacion }}</div>
+            <p class="score-desc">{{ sc.descripcion }}</p>
+          </div>
+          <div class="score-params">
+            <div class="sp-item sp-ok">
+              <div class="sp-num">{{ sc.parametrosOk }}</div>
+              <div class="sp-lbl">Normales</div>
+            </div>
+            <div class="sp-item sp-warn">
+              <div class="sp-num">{{ sc.parametrosWarn }}</div>
+              <div class="sp-lbl">En alerta</div>
+            </div>
+            <div class="sp-item sp-danger">
+              <div class="sp-num">{{ sc.parametrosDanger }}</div>
+              <div class="sp-lbl">Críticos</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="estadisticas">
+
+        <!-- RESUMEN GENERAL -->
+        <h3 class="seccion-titulo">Resumen General</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icono">📊</div>
+            <div class="stat-numero">{{ estadisticas.totalMediciones }}</div>
+            <div class="stat-label">Mediciones</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">🚨</div>
+            <div class="stat-numero">{{ estadisticas.totalEventos }}</div>
+            <div class="stat-label">Eventos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">⚠️</div>
+            <div class="stat-numero">{{ estadisticas.totalAlertas }}</div>
+            <div class="stat-label">Alertas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">🧪</div>
+            <div class="stat-numero">{{ estadisticas.promedioPh }}</div>
+            <div class="stat-label">pH promedio</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">🌡️</div>
+            <div class="stat-numero">{{ estadisticas.promedioTemperatura }}°C</div>
+            <div class="stat-label">Temp. promedio</div>
+          </div>
+        </div>
+
+        <!-- PARÁMETROS DE CALIDAD OMS / EPA -->
+        <h3 class="seccion-titulo">Parámetros de Calidad — OMS / EPA</h3>
+        <div class="params-calidad-grid">
+          <div class="param-card" *ngFor="let p of parametrosCalidad">
+            <div class="param-card-header">
+              <span class="param-nombre">{{ p.nombre }}</span>
+              <span class="status-pill" [ngClass]="statusPillClase(nivelDeParametro(p))">
+                {{ statusPillLabel(nivelDeParametro(p), '') }}
+              </span>
+            </div>
+            <div class="param-valor-row">
+              <span class="param-valor">{{ p.valor ?? '—' }}</span>
+              <span class="param-unidad">{{ p.unidad }}</span>
+            </div>
+            <div class="param-limite">{{ p.descripcionLimite }}</div>
+            <div class="param-bar-wrap">
+              <div class="param-bar-fill"
+                   [ngClass]="barraClase(nivelDeParametro(p))"
+                   [style.width.%]="barraProgreso(p.valor, p.maxOk)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RANGO DE MEDICIONES -->
+        <h3 class="seccion-titulo">Rango de Mediciones</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icono">⬇️</div>
+            <div class="stat-numero">{{ estadisticas.phMinimo }}</div>
+            <div class="stat-label">pH mínimo</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">⬆️</div>
+            <div class="stat-numero">{{ estadisticas.phMaximo }}</div>
+            <div class="stat-label">pH máximo</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">🥶</div>
+            <div class="stat-numero">{{ estadisticas.temperaturaMinima }}°C</div>
+            <div class="stat-label">Temp. mínima</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icono">🔥</div>
+            <div class="stat-numero">{{ estadisticas.temperaturaMaxima }}°C</div>
+            <div class="stat-label">Temp. máxima</div>
+          </div>
+        </div>
+
+        <!-- DISTRIBUCIÓN DE ALERTAS -->
+        <h3 class="seccion-titulo">Distribución de Alertas</h3>
+        <div class="nivel-summary">
+          <div *ngFor="let item of objetoAArray(estadisticas.alertasPorNivel)"
+               class="nivel-pill"
+               [ngClass]="'np-' + item.clave.toLowerCase()">
+            <div class="n-num">{{ item.valor }}</div>
+            <div class="n-lbl">{{ item.clave }}</div>
+          </div>
+          <div class="empty nivel-pill-empty"
+               *ngIf="objetoAArray(estadisticas.alertasPorNivel).length === 0">
+            Sin alertas en el período
+          </div>
+        </div>
+
+        <div class="barra-distribucion" *ngIf="distribucionAlertas.length > 0">
+          <div class="barra-seg"
+               *ngFor="let seg of distribucionAlertas"
+               [style.width.%]="seg.porcentaje"
+               [style.background]="seg.color"
+               [title]="seg.nivel + ': ' + seg.cantidad + ' (' + seg.porcentaje + '%)'">
+          </div>
+        </div>
+        <div class="barra-leyenda" *ngIf="distribucionAlertas.length > 0">
+          <div class="leyenda-item" *ngFor="let seg of distribucionAlertas">
+            <span class="leyenda-dot" [style.background]="seg.color"></span>
+            <span>{{ seg.nivel }} ({{ seg.porcentaje }}%)</span>
+          </div>
+        </div>
+
+        <!-- ALERTAS DETALLADAS -->
+        <h3 class="seccion-titulo">Alertas en el Período</h3>
+        <div class="alertas-lista" *ngIf="estadisticas.alertas.length; else sinAlertas">
+          <div class="alerta-item"
+               *ngFor="let alerta of estadisticas.alertas"
+               [ngClass]="nivelAlertaClase(alerta.nivel)">
+            <div class="alerta-dot" [ngClass]="nivelDotClase(alerta.nivel)"></div>
+            <div class="alerta-body">
+              <div class="alerta-header">
+                <span class="alerta-tag" [ngClass]="nivelTagClase(alerta.nivel)">
+                  {{ alerta.nivel }}
+                </span>
+                <span class="alerta-id">#{{ alerta.id }}</span>
+                <span class="alerta-fecha">{{ alerta.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="alerta-mensaje">{{ alerta.mensaje }}</div>
+            </div>
+            <div class="alerta-icono">
+              <i class="ti" [ngClass]="nivelIcono(alerta.nivel)"
+                 [style.color]="nivelIconoColor(alerta.nivel)"
+                 aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <ng-template #sinAlertas>
+          <div class="empty">Sin alertas en el período</div>
+        </ng-template>
+
+        <!-- EVENTOS -->
+        <h3 class="seccion-titulo">Eventos en el Período</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Descripción</th>
+              <th>Magnitud</th>
+              <th>Fecha</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let evento of estadisticas.eventos">
+              <td>{{ evento.id }}</td>
+              <td>{{ evento.descripcion }}</td>
+              <td><span class="badge-mag">{{ evento.magnitud }}</span></td>
+              <td>{{ evento.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+            <tr *ngIf="!estadisticas.eventos.length">
+              <td colspan="4" class="empty-td">Sin eventos en el período</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MEDICIONES POR CONTAMINANTE -->
+        <h3 class="seccion-titulo">Mediciones por Contaminante</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>Contaminante</th>
+              <th>N° Mediciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of objetoAArray(estadisticas.medicionesPorContaminante)">
+              <td>{{ item.clave }}</td>
+              <td><span class="badge-mag">📊 {{ item.valor }}</span></td>
+            </tr>
+            <tr *ngIf="objetoAArray(estadisticas.medicionesPorContaminante).length === 0">
+              <td colspan="2" class="empty-td">Sin mediciones en el período</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EVOLUCIÓN TEMPORAL -->
+        <h3 class="seccion-titulo">Evolución Temporal</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>pH promedio</th>
+              <th>Temperatura (°C)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let punto of estadisticas.evolucionPh; let i = index">
+              <td>{{ punto.fecha }}</td>
+              <td>{{ punto.valor }}</td>
+              <td>{{ estadisticas.evolucionTemperatura[i]?.valor ?? '—' }}</td>
+            </tr>
+            <tr *ngIf="!estadisticas.evolucionPh.length">
+              <td colspan="3" class="empty-td">Sin datos temporales</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </ng-container>
     </ng-container>
 
     <!-- Sin informes -->
-    <div class="empty"
-         *ngIf="!cargandoDetalle && !informeDetalle">
-
+    <div class="empty" *ngIf="!cargandoDetalle && !informeDetalle">
       Crea un informe para ver sus estadísticas.
-
     </div>
 
   </div>
