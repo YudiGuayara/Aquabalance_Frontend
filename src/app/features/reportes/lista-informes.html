@@ -5,7 +5,7 @@
 
     <div>
       <h2>📄 Reportes e Informes</h2>
-      <p>Estadísticas del sistema AquaBalance</p>
+      <p>Estadísticas y reportes del sistema AquaBalance</p>
     </div>
 
     <div class="header-actions">
@@ -32,15 +32,7 @@
         class="btn-pdf"
         (click)="exportarPDF()">
 
-        🖨️ PDF
-
-      </button>
-
-      <button
-        class="btn-primary"
-        (click)="abrirFormulario()">
-
-        + Nuevo
+        🖨️ Exportar PDF
 
       </button>
 
@@ -57,143 +49,7 @@
 
   </div>
 
-  <!-- MODAL -->
-  <div
-    class="modal-overlay"
-    *ngIf="mostrarFormulario">
-
-    <div class="modal">
-
-      <h3>
-        {{ modoEdicion ? 'Editar' : 'Nuevo' }} Informe
-      </h3>
-
-      <div
-        class="error-msg"
-        *ngIf="errorModal">
-
-        {{ errorModal }}
-
-      </div>
-
-      <!-- TITULO -->
-      <div class="field">
-
-        <label>Título *</label>
-
-        <input
-          type="text"
-          [(ngModel)]="form.titulo"
-          placeholder="Ej: Informe Mayo 2026">
-
-      </div>
-
-      <!-- DESCRIPCIÓN -->
-      <div class="field">
-
-        <label>Descripción</label>
-
-        <textarea
-          rows="3"
-          [(ngModel)]="form.descripcion"
-          placeholder="Descripción del informe">
-        </textarea>
-
-      </div>
-
-      <!-- RECURSO -->
-      <div class="field">
-
-        <label>Recurso *</label>
-
-        <select [(ngModel)]="form.recursoId">
-
-          <option [ngValue]="0" disabled>
-            Seleccionar recurso
-          </option>
-
-          <option
-            *ngFor="let r of recursos"
-            [ngValue]="r.id">
-
-            {{ r.nombre }}
-
-          </option>
-
-        </select>
-
-      </div>
-
-      <!-- CONTAMINANTE -->
-      <div class="field">
-
-        <label>Contaminante *</label>
-
-        <select [(ngModel)]="form.contaminanteId">
-
-          <option [ngValue]="0" disabled>
-            Seleccionar contaminante
-          </option>
-
-          <option
-            *ngFor="let c of contaminantes"
-            [ngValue]="c.id">
-
-            {{ c.nombre }}
-
-          </option>
-
-        </select>
-
-      </div>
-
-      <!-- FECHAS -->
-      <div class="field">
-
-        <label>Fecha inicio *</label>
-
-        <input
-          type="datetime-local"
-          [(ngModel)]="form.fechaInicio">
-
-      </div>
-
-      <div class="field">
-
-        <label>Fecha fin *</label>
-
-        <input
-          type="datetime-local"
-          [(ngModel)]="form.fechaFin">
-
-      </div>
-
-      <!-- BOTONES -->
-      <div class="modal-actions">
-
-        <button
-          class="btn-secondary"
-          (click)="cerrarFormulario()">
-
-          Cancelar
-
-        </button>
-
-        <button
-          class="btn-primary"
-          (click)="guardar()">
-
-          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
-
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- VISTA INFORMES -->
+  <!-- INFORMES -->
   <div *ngIf="vistaActual === 'informes'">
 
     <h3 class="seccion-titulo">
@@ -222,6 +78,7 @@
           <th>Recurso</th>
           <th>Contaminante</th>
           <th>Período</th>
+          <th>Generado</th>
           <th>Acciones</th>
 
         </tr>
@@ -247,34 +104,18 @@
           </td>
 
           <td>
+            {{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}
+          </td>
 
-            <div class="acciones">
+          <td>
 
-              <button
-                class="btn-stats"
-                (click)="verEstadisticas(i.id!)">
+            <button
+              class="btn-stats"
+              (click)="verEstadisticas(i.id!)">
 
-                📊
+              📊 Ver estadísticas
 
-              </button>
-
-              <button
-                class="btn-secondary"
-                (click)="abrirEdicion(i)">
-
-                ✏️
-
-              </button>
-
-              <button
-                class="btn-delete"
-                (click)="eliminar(i.id!)">
-
-                🗑️
-
-              </button>
-
-            </div>
+            </button>
 
           </td>
 
@@ -293,6 +134,149 @@
       </div>
 
     </div>
+
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div *ngIf="vistaActual === 'estadisticas'">
+
+    <div
+      class="loading"
+      *ngIf="cargandoDetalle">
+
+      Cargando estadísticas...
+
+    </div>
+
+    <ng-container
+      *ngIf="!cargandoDetalle && informeDetalle">
+
+      <!-- SELECT -->
+      <div class="field selector-informe">
+
+        <label>
+          Selecciona un informe:
+        </label>
+
+        <select
+          (change)="onCambiarInforme($event)">
+
+          <option
+            *ngFor="let i of informes"
+            [value]="i.id"
+            [selected]="i.id === informeSeleccionadoId">
+
+            {{ i.titulo }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- HEADER -->
+      <div class="informe-cabecera">
+
+        <div>
+
+          <h3>
+            {{ informeDetalle.titulo }}
+          </h3>
+
+          <p>
+            {{ informeDetalle.descripcion }}
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- SCORE -->
+      <ng-container *ngIf="scoreCalidad as sc">
+
+        <div
+          class="score-card"
+          [ngClass]="scoreCircleClase(sc.clasificacion)">
+
+          <div class="score-circle">
+
+            <span class="score-num">
+              {{ sc.score }}
+            </span>
+
+            <span class="score-sub">
+              /100
+            </span>
+
+          </div>
+
+          <div class="score-content">
+
+            <h3>
+              Calidad:
+              {{ sc.clasificacion }}
+            </h3>
+
+            <p>
+              {{ sc.descripcion }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </ng-container>
+
+      <!-- RESUMEN -->
+      <ng-container *ngIf="estadisticas">
+
+        <h3 class="seccion-titulo">
+          Resumen General
+        </h3>
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <div class="stat-numero">
+              {{ estadisticas.totalMediciones }}
+            </div>
+
+            <div class="stat-label">
+              Mediciones
+            </div>
+
+          </div>
+
+          <div class="stat-card">
+
+            <div class="stat-numero">
+              {{ estadisticas.totalEventos }}
+            </div>
+
+            <div class="stat-label">
+              Eventos
+            </div>
+
+          </div>
+
+          <div class="stat-card">
+
+            <div class="stat-numero">
+              {{ estadisticas.totalAlertas }}
+            </div>
+
+            <div class="stat-label">
+              Alertas
+            </div>
+
+          </div>
+
+        </div>
+
+      </ng-container>
+
+    </ng-container>
 
   </div>
 
