@@ -1,6 +1,5 @@
 <div class="page">
 
-  <!-- HEADER -->
   <div class="page-header">
     <div>
       <h2>📄 Reportes e Informes</h2>
@@ -21,34 +20,23 @@
         📊 Estadísticas
       </button>
 
-      <!-- TODOS pueden exportar PDF -->
       <button class="btn-pdf" (click)="exportarPDF()">
         🖨️ PDF
       </button>
 
-      <!-- SOLO ADMIN Y OPERADOR -->
-      <button
-        *ngIf="!esPublico"
-        class="btn-primary"
-        (click)="abrirFormulario()">
+      <button *ngIf="puedeEscribir" class="btn-primary" (click)="abrirFormulario()">
         + Nuevo
       </button>
 
     </div>
   </div>
 
-  <!-- ERROR GLOBAL -->
-  <div class="error-msg" *ngIf="error">
-    {{ error }}
-  </div>
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
 
-  <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div class="modal-overlay" *ngIf="mostrarFormulario && puedeEscribir">
     <div class="modal">
 
-      <h3>
-        {{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}
-      </h3>
+      <h3>{{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}</h3>
 
       <div class="error-msg" *ngIf="errorModal" style="margin-bottom:16px">
         {{ errorModal }}
@@ -56,51 +44,30 @@
 
       <div class="field">
         <label>📝 Título</label>
-        <input
-          type="text"
-          [(ngModel)]="form.titulo"
-          placeholder="Ej: Informe Mayo 2026" />
+        <input type="text" [(ngModel)]="form.titulo" placeholder="Ej: Informe Mayo 2026" />
       </div>
 
       <div class="field">
         <label>📄 Descripción</label>
-        <textarea
-          [(ngModel)]="form.descripcion"
-          placeholder="Descripción del informe..."
-          rows="3">
-        </textarea>
+        <textarea [(ngModel)]="form.descripcion" placeholder="Descripción del informe..." rows="3"></textarea>
       </div>
 
       <div class="field">
         <label>💧 Recurso Hídrico</label>
-
         <div class="select-box">
           <select [(ngModel)]="form.recursoId">
-            <option [ngValue]="0" disabled>
-              Seleccionar recurso
-            </option>
-
-            <option *ngFor="let r of recursos" [ngValue]="r.id">
-              {{ r.nombre }}
-            </option>
+            <option [ngValue]="0" disabled>Seleccionar recurso</option>
+            <option *ngFor="let r of recursos" [ngValue]="r.id">{{ r.nombre }}</option>
           </select>
         </div>
       </div>
 
       <div class="field">
         <label>🧪 Contaminante</label>
-
         <div class="select-box">
           <select [(ngModel)]="form.contaminanteId">
-
-            <option [ngValue]="0" disabled>
-              Seleccionar contaminante
-            </option>
-
-            <option *ngFor="let c of contaminantes" [ngValue]="c.id">
-              {{ c.nombre }}
-            </option>
-
+            <option [ngValue]="0" disabled>Seleccionar contaminante</option>
+            <option *ngFor="let c of contaminantes" [ngValue]="c.id">{{ c.nombre }}</option>
           </select>
         </div>
       </div>
@@ -116,34 +83,22 @@
       </div>
 
       <div class="modal-actions">
-
-        <button class="btn-secondary" (click)="cerrarFormulario()">
-          Cancelar
-        </button>
-
+        <button class="btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
         <button class="btn-primary" (click)="guardar()">
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
         </button>
-
       </div>
     </div>
   </div>
 
   <!-- VISTA INFORMES -->
   <div *ngIf="vistaActual === 'informes'">
-
-    <h3 class="seccion-titulo">
-      Lista de Informes
-    </h3>
-
+    <h3 class="seccion-titulo">Lista de Informes</h3>
     <div class="table-container">
 
-      <div class="loading" *ngIf="cargando">
-        Cargando...
-      </div>
+      <div class="loading" *ngIf="cargando">Cargando...</div>
 
       <table *ngIf="!cargando && informes.length > 0">
-
         <thead>
         <tr>
           <th>ID</th>
@@ -155,62 +110,28 @@
           <th>Acciones</th>
         </tr>
         </thead>
-
         <tbody>
-
         <tr *ngFor="let i of informes">
-
           <td>{{ i.id }}</td>
-
           <td>{{ i.titulo }}</td>
-
           <td>{{ i.nombreRecurso }}</td>
-
           <td>{{ i.nombreContaminante }}</td>
-
+          <td>{{ i.fechaInicio | date:'dd/MM/yy' }} → {{ i.fechaFin | date:'dd/MM/yy' }}</td>
+          <td>{{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</td>
           <td>
-            {{ i.fechaInicio | date:'dd/MM/yy' }}
-            →
-            {{ i.fechaFin | date:'dd/MM/yy' }}
-          </td>
-
-          <td>
-            {{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}
-          </td>
-
-          <td>
-
             <div class="acciones">
-
-              <!-- TODOS pueden ver stats -->
-              <button
-                class="btn-stats"
-                (click)="verEstadisticas(i.id!)">
+              <button class="btn-stats" (click)="verEstadisticas(i.id!)">
                 📊 Ver stats
               </button>
-
-              <!-- SOLO ADMIN Y OPERADOR -->
-              <button
-                *ngIf="!esPublico"
-                class="btn-secondary btn-sm"
-                (click)="abrirEdicion(i)">
+              <button *ngIf="puedeEscribir" class="btn-secondary btn-sm" (click)="abrirEdicion(i)">
                 ✏️
               </button>
-
-              <!-- SOLO ADMIN Y OPERADOR -->
-              <button
-                *ngIf="!esPublico"
-                class="btn-delete"
-                (click)="eliminar(i.id!)">
+              <button *ngIf="puedeEscribir" class="btn-delete" (click)="eliminar(i.id!)">
                 🗑️
               </button>
-
             </div>
-
           </td>
-
         </tr>
-
         </tbody>
       </table>
 
@@ -224,81 +145,40 @@
   <!-- VISTA ESTADÍSTICAS -->
   <div *ngIf="vistaActual === 'estadisticas'">
 
-    <div class="loading" *ngIf="cargandoDetalle">
-      Cargando estadísticas...
-    </div>
+    <div class="loading" *ngIf="cargandoDetalle">Cargando estadísticas...</div>
 
     <ng-container *ngIf="!cargandoDetalle && informeDetalle">
 
-      <!-- SELECTOR -->
       <div class="field selector-informe">
-
-        <label>
-          Selecciona un informe:
-        </label>
-
+        <label>Selecciona un informe:</label>
         <div class="select-box" style="flex:1">
-
           <select (change)="onCambiarInforme($event)">
-
             <option
               *ngFor="let i of informes"
               [value]="i.id"
               [selected]="i.id === informeSeleccionadoId">
-
-              {{ i.titulo }}
-              —
-              {{ i.nombreRecurso }}
-              ·
-              {{ i.nombreContaminante }}
-
+              {{ i.titulo }} — {{ i.nombreRecurso }} · {{ i.nombreContaminante }}
             </option>
-
           </select>
-
         </div>
       </div>
 
-      <!-- CABECERA -->
       <div class="informe-cabecera">
-
         <div class="informe-cabecera-left">
-
-          <h3>
-            {{ informeDetalle.titulo }}
-          </h3>
-
-          <p *ngIf="informeDetalle.descripcion">
-            {{ informeDetalle.descripcion }}
-          </p>
-
+          <h3>{{ informeDetalle.titulo }}</h3>
+          <p *ngIf="informeDetalle.descripcion">{{ informeDetalle.descripcion }}</p>
           <p class="informe-periodo">
-
             📅
             {{ informeDetalleFechas.inicio | date:'dd/MM/yyyy HH:mm' }}
             →
             {{ informeDetalleFechas.fin | date:'dd/MM/yyyy HH:mm' }}
-
           </p>
-
         </div>
-
         <div class="informe-cabecera-right">
-
-          <span class="informe-recurso-badge">
-            💧 {{ informeDetalle.nombreRecurso }}
-          </span>
-
-          <span class="informe-contaminante-badge">
-            🧪 {{ informeDetalle.nombreContaminante }}
-          </span>
-
+          <span class="informe-recurso-badge">💧 {{ informeDetalle.nombreRecurso }}</span>
+          <span class="informe-contaminante-badge">🧪 {{ informeDetalle.nombreContaminante }}</span>
         </div>
-
       </div>
-
-      <!-- TODO EL RESTO DE ESTADÍSTICAS SE DEJA IGUAL -->
-      <!-- NO CAMBIES NADA MÁS DEL DISEÑO -->
 
     </ng-container>
 
