@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { InformeService } from '../../core/services/informe.service';
 import { RecursoService } from '../../core/services/recurso.service';
 import { ContaminanteService } from '../../core/services/contaminante.service';
-import { AuthService } from '../../core/services/auth.service';
-
 import {
   Informe,
   Estadisticas,
@@ -33,7 +31,7 @@ export class ListaInformesComponent implements OnInit {
   errorModal = '';
   mostrarFormulario = false;
   modoEdicion = false;
-  esPublico = false;
+  vistaActual: 'informes' | 'estadisticas' = 'informes';
 
   informeSeleccionadoId: number | null = null;
   informeDetalle: Informe | null = null;
@@ -56,16 +54,14 @@ export class ListaInformesComponent implements OnInit {
     private informeService: InformeService,
     private recursoService: RecursoService,
     private contaminanteService: ContaminanteService,
-    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.esPublico = this.authService.isPublico();
-
     this.cargar();
     this.cargarRecursos();
     this.cargarContaminantes();
   }
+
   // ─── CARGA DE DATOS ───────────────────────────────────────────
 
   cargar(): void {

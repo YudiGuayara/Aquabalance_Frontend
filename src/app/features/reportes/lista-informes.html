@@ -170,38 +170,30 @@
       <!-- SCORE DE CALIDAD GLOBAL -->
       <ng-container *ngIf="scoreCalidad as sc">
         <div class="score-card" [ngClass]="scoreCircleClase(sc.clasificacion)">
-
-          <div class="score-left">
+          <div class="score-circle-wrap">
             <div class="score-circle">
               <span class="score-num">{{ sc.score }}</span>
-              <span class="score-sub">/100</span>
+              <span class="score-sub">/ 100</span>
             </div>
           </div>
-
-          <div class="score-center">
-            <h2>{{ sc.clasificacion }}</h2>
-            <p>{{ sc.descripcion }}</p>
+          <div class="score-content">
+            <div class="score-title">Calidad hídrica: {{ sc.clasificacion }}</div>
+            <p class="score-desc">{{ sc.descripcion }}</p>
           </div>
-
-          <div class="score-right">
-
-            <div class="score-mini ok">
-              <span>{{ sc.parametrosOk }}</span>
-              <small>Normales</small>
+          <div class="score-params">
+            <div class="sp-item sp-ok">
+              <div class="sp-num">{{ sc.parametrosOk }}</div>
+              <div class="sp-lbl">Normales</div>
             </div>
-
-            <div class="score-mini warn">
-              <span>{{ sc.parametrosWarn }}</span>
-              <small>Alerta</small>
+            <div class="sp-item sp-warn">
+              <div class="sp-num">{{ sc.parametrosWarn }}</div>
+              <div class="sp-lbl">En alerta</div>
             </div>
-
-            <div class="score-mini danger">
-              <span>{{ sc.parametrosDanger }}</span>
-              <small>Críticos</small>
+            <div class="sp-item sp-danger">
+              <div class="sp-num">{{ sc.parametrosDanger }}</div>
+              <div class="sp-lbl">Críticos</div>
             </div>
-
           </div>
-
         </div>
       </ng-container>
 
@@ -244,7 +236,7 @@
             <div class="param-card-header">
               <span class="param-nombre">{{ p.nombre }}</span>
               <span class="status-pill" [ngClass]="statusPillClase(nivelDeParametro(p))">
-                {{ statusPillLabel(nivelDeParametro(p), p.nombre) }}
+                {{ statusPillLabel(nivelDeParametro(p), '') }}
               </span>
             </div>
             <div class="param-valor-row">
@@ -289,14 +281,14 @@
         <!-- DISTRIBUCIÓN DE ALERTAS -->
         <h3 class="seccion-titulo">Distribución de Alertas</h3>
         <div class="nivel-summary">
-          <div *ngFor="let item of distribucionAlertas"
+          <div *ngFor="let item of objetoAArray(estadisticas.alertasPorNivel)"
                class="nivel-pill"
-               [ngClass]="'np-' + item.nivel.toLowerCase()"
-            <div class="n-num">{{ item.cantidad }}</div>
-            <div class="n-lbl">{{ item.nivel }}</div>
+               [ngClass]="'np-' + item.clave.toLowerCase()">
+            <div class="n-num">{{ item.valor }}</div>
+            <div class="n-lbl">{{ item.clave }}</div>
           </div>
           <div class="empty nivel-pill-empty"
-               *ngIf="distribucionAlertas.length === 0"
+               *ngIf="objetoAArray(estadisticas.alertasPorNivel).length === 0">
             Sin alertas en el período
           </div>
         </div>
@@ -318,7 +310,7 @@
 
         <!-- ALERTAS DETALLADAS -->
         <h3 class="seccion-titulo">Alertas en el Período</h3>
-        <div class="alertas-lista" *ngIf="estadisticas.alertas?.length; else sinAlertas">
+        <div class="alertas-lista" *ngIf="estadisticas.alertas.length; else sinAlertas">
           <div class="alerta-item"
                *ngFor="let alerta of estadisticas.alertas"
                [ngClass]="nivelAlertaClase(alerta.nivel)">
@@ -363,7 +355,7 @@
               <td><span class="badge-mag">{{ evento.magnitud }}</span></td>
               <td>{{ evento.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
             </tr>
-            <tr *ngIf="!estadisticas.eventos?.length">
+            <tr *ngIf="!estadisticas.eventos.length">
               <td colspan="4" class="empty-td">Sin eventos en el período</td>
             </tr>
             </tbody>
@@ -405,11 +397,11 @@
             </thead>
             <tbody>
             <tr *ngFor="let punto of estadisticas.evolucionPh; let i = index">
-              <td>{{ punto.fecha | date:'dd/MM/yyyy' }}</td>
+              <td>{{ punto.fecha }}</td>
               <td>{{ punto.valor }}</td>
               <td>{{ estadisticas.evolucionTemperatura[i]?.valor ?? '—' }}</td>
             </tr>
-            <tr *ngIf="!estadisticas.evolucionPh?.length">
+            <tr *ngIf="!estadisticas.evolucionPh.length">
               <td colspan="3" class="empty-td">Sin datos temporales</td>
             </tr>
             </tbody>
