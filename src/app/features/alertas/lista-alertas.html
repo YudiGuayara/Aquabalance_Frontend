@@ -1,31 +1,59 @@
 <div class="page">
+
   <div class="page-header">
+
     <div>
       <h2>⚠️ Alertas</h2>
       <p>Notificaciones generadas por eventos críticos</p>
     </div>
-    <button class="btn-primary" (click)="abrirFormulario()">+ Nueva Alerta</button>
+
+    <!-- 🔹 SOLO ADMIN Y OPERADOR -->
+    <button
+      *ngIf="!isPublico"
+      class="btn-primary"
+      (click)="abrirFormulario()">
+
+      + Nueva Alerta
+
+    </button>
+
   </div>
 
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="error" *ngIf="error">
+    {{ error }}
+  </div>
 
   <!-- FILTRO -->
   <div class="filtros">
+
     <label>Filtrar por nivel:</label>
+
     <select [(ngModel)]="filtroNivel" (change)="filtrarPorNivel()">
+
       <option value="">Todos</option>
-      <option *ngFor="let n of niveles" [value]="n">{{ n }}</option>
+
+      <option *ngFor="let n of niveles" [value]="n">
+        {{ n }}
+      </option>
+
     </select>
+
   </div>
 
   <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarFormulario">
+
     <div class="modal">
 
-      <h3>{{ modoEdicion ? 'Editar' : 'Nueva' }} Alerta</h3>
+      <h3>
+        {{ modoEdicion ? 'Editar' : 'Nueva' }} Alerta
+      </h3>
 
       <!-- EVENTO -->
       <div class="field">
+
         <label>Evento relacionado</label>
 
         <select
@@ -37,18 +65,26 @@
           </option>
 
           <option *ngFor="let e of eventos" [value]="e.id">
+
             #{{ e.id }} — {{ e.descripcion }}
+
           </option>
 
         </select>
 
-        <small class="error-text" *ngIf="form.idEvento === 0">
+        <small
+          class="error-text"
+          *ngIf="form.idEvento === 0">
+
           Debes seleccionar un evento
+
         </small>
+
       </div>
 
       <!-- NIVEL -->
       <div class="field">
+
         <label>Nivel de alerta</label>
 
         <select
@@ -65,26 +101,42 @@
 
         </select>
 
-        <small class="error-text" *ngIf="!form.nivel">
+        <small
+          class="error-text"
+          *ngIf="!form.nivel">
+
           Debes seleccionar un nivel
+
         </small>
+
       </div>
 
       <!-- MENSAJE -->
       <div class="field">
+
         <label>Mensaje</label>
 
         <textarea
           [(ngModel)]="form.mensaje"
           placeholder="Describe la alerta..."
           rows="3"
-          [class.input-error]="!form.mensaje || form.mensaje.trim().length === 0">
+          [class.input-error]="
+            !form.mensaje ||
+            form.mensaje.trim().length === 0
+          ">
         </textarea>
 
-        <small class="error-text"
-               *ngIf="!form.mensaje || form.mensaje.trim().length === 0">
+        <small
+          class="error-text"
+          *ngIf="
+            !form.mensaje ||
+            form.mensaje.trim().length === 0
+          ">
+
           El mensaje es obligatorio
+
         </small>
+
       </div>
 
       <!-- BOTONES -->
@@ -112,9 +164,14 @@
             form.mensaje.trim().length === 0
           ">
 
-          {{ guardando
-          ? (modoEdicion ? 'Actualizando...' : 'Registrando...')
-          : (modoEdicion ? 'Actualizar' : 'Registrar')
+          {{
+          guardando
+          ? (modoEdicion
+          ? 'Actualizando...'
+          : 'Registrando...')
+          : (modoEdicion
+          ? 'Actualizar'
+          : 'Registrar')
           }}
 
         </button>
@@ -122,26 +179,43 @@
       </div>
 
     </div>
+
   </div>
 
   <!-- TABLA -->
   <div class="table-container">
 
-    <div class="loading" *ngIf="cargando">
+    <div
+      class="loading"
+      *ngIf="cargando">
+
       Cargando...
+
     </div>
 
     <table *ngIf="!cargando && alertas.length > 0">
 
       <thead>
+
       <tr>
+
         <th>ID</th>
+
         <th>Nivel</th>
+
         <th>Mensaje</th>
+
         <th>Evento</th>
+
         <th>Fecha</th>
-        <th>Acciones</th>
+
+        <!-- 🔹 SOLO ADMIN Y OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
+
       </tr>
+
       </thead>
 
       <tbody>
@@ -151,18 +225,41 @@
         <td>{{ a.id }}</td>
 
         <td>
-          <span class="nivel-dot" [ngClass]="nivelColor(a.nivel)"></span>
+
+          <span
+            class="nivel-dot"
+            [ngClass]="nivelColor(a.nivel)">
+          </span>
+
         </td>
 
         <td>{{ a.mensaje }}</td>
 
         <td>#{{ a.idEvento }}</td>
 
-        <td>{{ a.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-
         <td>
-          <button class="btn-edit" (click)="editar(a)">✏️</button>
-          <button class="btn-delete" (click)="eliminar(a.id!)">🗑️</button>
+          {{ a.fecha | date:'dd/MM/yyyy HH:mm' }}
+        </td>
+
+        <!-- 🔹 SOLO ADMIN Y OPERADOR -->
+        <td *ngIf="!isPublico">
+
+          <button
+            class="btn-edit"
+            (click)="editar(a)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="eliminar(a.id!)">
+
+            🗑️
+
+          </button>
+
         </td>
 
       </tr>
@@ -171,9 +268,14 @@
 
     </table>
 
-    <div class="empty" *ngIf="!cargando && alertas.length === 0">
+    <div
+      class="empty"
+      *ngIf="!cargando && alertas.length === 0">
+
       No hay alertas registradas aún.
+
     </div>
 
   </div>
+
 </div>

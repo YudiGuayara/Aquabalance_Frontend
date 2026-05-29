@@ -49,4 +49,24 @@ export class AuthService {
     const u = localStorage.getItem('usuario');
     return u ? JSON.parse(u) : null;
   }
+
+  // 🔹 Obtener rol
+  getRol(): string {
+    return this.getUsuario()?.rol || '';
+  }
+
+  // 🔹 Usuario público
+  isPublico(): boolean {
+    return this.getRol() === 'UsuarioPublico';
+  }
+
+  // 🔹 Administrador
+  isAdmin(): boolean {
+    return this.getRol() === 'Administrador';
+  }
+
+  // 🔹 Operador
+  isOperador(): boolean {
+    return this.getRol() === 'Operador';
+  }
 }
