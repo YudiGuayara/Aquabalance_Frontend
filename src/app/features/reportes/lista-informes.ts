@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { InformeService } from '../../core/services/informe.service';
 import { RecursoService } from '../../core/services/recurso.service';
 import { ContaminanteService } from '../../core/services/contaminante.service';
-import { AuthService } from '../../core/services/auth.service';
 import {
   Informe,
   Estadisticas,
@@ -55,24 +54,7 @@ export class ListaInformesComponent implements OnInit {
     private informeService: InformeService,
     private recursoService: RecursoService,
     private contaminanteService: ContaminanteService,
-    private authService: AuthService,
   ) {}
-
-  // ─── ROLES ───────────────────────────────────────────────────
-
-  get esPublico(): boolean {
-    return this.authService.getRol() === 'UsuarioPublico';
-  }
-
-  get puedeEscribir(): boolean {
-    return this.authService.puedeEscribir();
-  }
-
-  get esAdmin(): boolean {
-    return this.authService.esAdmin();
-  }
-
-  // ─── INIT ────────────────────────────────────────────────────
 
   ngOnInit(): void {
     this.cargar();
@@ -107,6 +89,8 @@ export class ListaInformesComponent implements OnInit {
     this.informeDetalle = null;
     this.informeService.buscarPorId(id).subscribe({
       next: (data) => {
+        console.log('Detalle recibido:', data);
+        console.log('Estadísticas:', (data as any).estadisticas);
         this.informeDetalle = data;
         this.cargandoDetalle = false;
       },
@@ -148,7 +132,6 @@ export class ListaInformesComponent implements OnInit {
   // ─── FORMULARIO ──────────────────────────────────────────────
 
   abrirFormulario(): void {
-    if (!this.puedeEscribir) return;
     this.form = this.formVacio();
     this.modoEdicion = false;
     this.errorModal = '';
@@ -156,7 +139,6 @@ export class ListaInformesComponent implements OnInit {
   }
 
   abrirEdicion(informe: Informe): void {
-    if (!this.puedeEscribir) return;
     this.form = {
       id: informe.id,
       titulo: informe.titulo,
@@ -195,7 +177,6 @@ export class ListaInformesComponent implements OnInit {
   }
 
   guardar(): void {
-    if (!this.puedeEscribir) return;
     this.errorModal = '';
 
     if (!this.form.titulo?.trim())                                   { this.errorModal = 'El título es obligatorio'; return; }
@@ -237,7 +218,6 @@ export class ListaInformesComponent implements OnInit {
   }
 
   eliminar(id: number): void {
-    if (!this.puedeEscribir) return;
     if (confirm('¿Eliminar este informe?')) {
       this.informeService.eliminar(id).subscribe({
         next: () => {
@@ -277,6 +257,7 @@ export class ListaInformesComponent implements OnInit {
     return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
   }
 
+  // Para el template HTML (fechas del informe detalle)
   get informeDetalleFechas(): { inicio: Date | null; fin: Date | null; generacion: Date | null } {
     if (!this.informeDetalle) return { inicio: null, fin: null, generacion: null };
     const inf = this.informeDetalle as any;
@@ -379,6 +360,8 @@ export class ListaInformesComponent implements OnInit {
     return map[clasificacion] ?? 'sc-regular';
   }
 
+  // ─── ALERTAS ─────────────────────────────────────────────────
+
   nivelAlertaClase(nivel: string): string {
     switch (nivel?.toUpperCase()) {
       case 'ALTA': case 'ROJA':     return 'nivel-alta';
@@ -424,6 +407,8 @@ export class ListaInformesComponent implements OnInit {
     }
   }
 
+  // ─── DISTRIBUCIÓN ALERTAS ────────────────────────────────────
+
   get distribucionAlertas(): { nivel: string; cantidad: number; porcentaje: number; color: string }[] {
     const map = this.estadisticas?.alertasPorNivel ?? {};
     const total = Object.values(map).reduce((a, b) => a + b, 0);
@@ -448,6 +433,8 @@ export class ListaInformesComponent implements OnInit {
       });
   }
 
+  // ─── GAUGE ───────────────────────────────────────────────────
+
   gaugeOffset(valor: number | undefined, min: number, max: number): number {
     if (valor === undefined || valor === null) return 157;
     const pct = Math.min(1, Math.max(0, valor / (max * 1.2)));
@@ -457,6 +444,8 @@ export class ListaInformesComponent implements OnInit {
   gaugeColor(nivel: NivelCalidad): string {
     return { ok: '#639922', warn: '#EF9F27', danger: '#E24B4A' }[nivel];
   }
+
+  // ─── UTILIDADES ──────────────────────────────────────────────
 
   get estadisticas(): Estadisticas | null {
     const d = this.informeDetalle as any;
@@ -488,6 +477,8 @@ export class ListaInformesComponent implements OnInit {
     return { titulo: '', descripcion: '', fechaInicio: '', fechaFin: '', recursoId: 0, contaminanteId: 0 };
   }
 
+  // ─── EXPORTAR PDF ────────────────────────────────────────────
+
   exportarPDF(): void {
     const id = this.informeSeleccionadoId
       ?? (this.informes.length > 0 ? this.informes[0].id : null);
@@ -508,8 +499,10 @@ export class ListaInformesComponent implements OnInit {
   private _generarPDF(): void {
     const inf   = this.informeDetalle!;
     const stats = this.estadisticas;
+
     const fmt  = (v: any) => this._fmt(v);
     const fmtD = (v: any) => this._fmtD(v);
+
     const score = this.scoreCalidad;
     const scoreColor = score
       ? ({'Excelente':'#3B6D11','Buena':'#3B6D11','Regular':'#854F0B','Mala':'#A32D2D','Crítica':'#A32D2D'} as any)[score.clasificacion] ?? '#854F0B'
@@ -623,6 +616,7 @@ export class ListaInformesComponent implements OnInit {
   .pie{margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0;text-align:center;color:#94a3b8;font-size:10px}
   @media print{body,html{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style></head><body>
+
 <div class="portada">
   <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.7;margin-bottom:10px">💧 AquaBalance · Sistema de Monitoreo Hídrico</div>
   <h1>${inf.titulo}</h1>
@@ -637,6 +631,7 @@ export class ListaInformesComponent implements OnInit {
     <div><div class="meta-label">ID</div><div class="meta-value">#${inf.id ?? '—'}</div></div>
   </div>
 </div>
+
 ${score ? `
 <div class="score-box">
   <div class="sc">
@@ -653,8 +648,10 @@ ${score ? `
     </div>
   </div>
 </div>` : ''}
+
 <div class="body">
-  <div class="sec"><div class="st">Resumen General</div>
+  <div class="sec">
+    <div class="st">Resumen General</div>
     <div class="g5">
       <div class="sc2"><div class="sc2-n">${stats?.totalMediciones ?? 0}</div><div class="sc2-l">Mediciones</div></div>
       <div class="sc2"><div class="sc2-n">${stats?.totalEventos ?? 0}</div><div class="sc2-l">Eventos</div></div>
@@ -663,11 +660,13 @@ ${score ? `
       <div class="sc2"><div class="sc2-n">${stats?.promedioTemperatura ?? '—'}°</div><div class="sc2-l">Temp.</div></div>
     </div>
   </div>
-  <div class="sec"><div class="st">Parámetros de Calidad OMS / EPA</div>
+  <div class="sec">
+    <div class="st">Parámetros de Calidad OMS / EPA</div>
     <table><thead><tr><th>Parámetro</th><th>Valor</th><th>Límite</th><th class="center">Nivel</th><th class="center">Estado</th></tr></thead>
     <tbody>${filasParams || '<tr><td colspan="5" class="empty-row">Sin parámetros</td></tr>'}</tbody></table>
   </div>
-  <div class="sec"><div class="st">Rango de Mediciones</div>
+  <div class="sec">
+    <div class="st">Rango de Mediciones</div>
     <div class="g4">
       <div class="sc2"><div class="sc2-n">${stats?.phMinimo ?? '—'}</div><div class="sc2-l">pH mín.</div></div>
       <div class="sc2"><div class="sc2-n">${stats?.phMaximo ?? '—'}</div><div class="sc2-l">pH máx.</div></div>
@@ -675,22 +674,27 @@ ${score ? `
       <div class="sc2"><div class="sc2-n">${stats?.temperaturaMaxima ?? '—'}°</div><div class="sc2-l">T. máx.</div></div>
     </div>
   </div>
-  <div class="sec"><div class="st">Alertas por Nivel</div>
+  <div class="sec">
+    <div class="st">Alertas por Nivel</div>
     <div class="niv">${alertasPorNivelHtml}</div>
   </div>
-  <div class="sec"><div class="st">Mediciones por Contaminante</div>
+  <div class="sec">
+    <div class="st">Mediciones por Contaminante</div>
     <table><thead><tr><th>Contaminante</th><th>N° Mediciones</th></tr></thead>
     <tbody>${filasMed}</tbody></table>
   </div>
-  <div class="sec"><div class="st">Eventos en el Período</div>
+  <div class="sec">
+    <div class="st">Eventos en el Período</div>
     <table><thead><tr><th>ID</th><th>Descripción</th><th>Magnitud</th><th>Fecha</th></tr></thead>
     <tbody>${filasEventos}</tbody></table>
   </div>
-  <div class="sec"><div class="st">Alertas en el Período</div>
+  <div class="sec">
+    <div class="st">Alertas en el Período</div>
     <table><thead><tr><th>ID</th><th>Nivel</th><th>Mensaje</th><th>Fecha</th></tr></thead>
     <tbody>${filasAlertas}</tbody></table>
   </div>
-  <div class="sec"><div class="st">Evolución Temporal</div>
+  <div class="sec">
+    <div class="st">Evolución Temporal</div>
     <table><thead><tr><th>Fecha</th><th>pH promedio</th><th>Temperatura (°C)</th></tr></thead>
     <tbody>${filasEvolucion}</tbody></table>
   </div>
