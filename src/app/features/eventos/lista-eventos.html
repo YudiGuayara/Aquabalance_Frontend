@@ -1,104 +1,114 @@
 <div class="page">
+
   <div class="page-header">
+
     <div>
       <h2>🚨 Eventos</h2>
       <p>Eventos generados por mediciones críticas</p>
     </div>
-    <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo Evento</button>
+
+    <!-- 🔥 SOLO ADMIN / OPERADOR -->
+    <button
+      *ngIf="!isPublico"
+      class="btn-primary"
+      (click)="abrirFormulario()">
+
+      + Nuevo Evento
+
+    </button>
+
   </div>
 
-  <div class="error" *ngIf="error">{{ error }}</div>
+  <div class="error" *ngIf="error">
+    {{ error }}
+  </div>
 
   <!-- MODAL -->
   <div class="modal-overlay" *ngIf="mostrarFormulario">
+
     <div class="modal">
 
-      <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Evento</h3>
+      <h3>
+        {{ modoEdicion ? 'Editar' : 'Nuevo' }} Evento
+      </h3>
 
       <!-- DESCRIPCIÓN -->
       <div class="field">
+
         <label>Descripción</label>
 
         <textarea
           [(ngModel)]="form.descripcion"
           placeholder="Describe el evento..."
-          rows="3"
-          [class.input-error]="!form.descripcion || form.descripcion.trim().length === 0">
+          rows="3">
+
         </textarea>
 
-        <small class="error-text"
-               *ngIf="!form.descripcion || form.descripcion.trim().length === 0">
-          La descripción es obligatoria
-        </small>
       </div>
 
       <!-- MAGNITUD -->
       <div class="field">
+
         <label>Magnitud</label>
 
-        <select
-          [(ngModel)]="form.magnitud"
-          [class.input-error]="!form.magnitud">
+        <select [(ngModel)]="form.magnitud">
 
-          <option [ngValue]="null" disabled>
-            Selecciona una magnitud
-          </option>
+          <option
+            *ngFor="let m of magnitudes"
+            [value]="m">
 
-          <option *ngFor="let m of magnitudes" [value]="m">
             {{ m }}
+
           </option>
 
         </select>
 
-        <small class="error-text" *ngIf="!form.magnitud">
-          Debes seleccionar una magnitud
-        </small>
       </div>
 
       <!-- RECURSO -->
       <div class="field">
+
         <label>Recurso afectado</label>
 
-        <select
-          [(ngModel)]="form.idRecurso"
-          [class.input-error]="form.idRecurso === 0">
+        <select [(ngModel)]="form.idRecurso">
 
           <option [value]="0" disabled>
             Selecciona un recurso
           </option>
 
-          <option *ngFor="let r of recursos" [value]="r.id">
+          <option
+            *ngFor="let r of recursos"
+            [value]="r.id">
+
             {{ r.nombre }}
+
           </option>
 
         </select>
 
-        <small class="error-text" *ngIf="form.idRecurso === 0">
-          Debes seleccionar un recurso
-        </small>
       </div>
 
       <!-- CONTAMINANTE -->
       <div class="field">
+
         <label>Contaminante</label>
 
-        <select
-          [(ngModel)]="form.idContaminante"
-          [class.input-error]="form.idContaminante === 0">
+        <select [(ngModel)]="form.idContaminante">
 
           <option [value]="0" disabled>
             Selecciona un contaminante
           </option>
 
-          <option *ngFor="let c of contaminantes" [value]="c.id">
+          <option
+            *ngFor="let c of contaminantes"
+            [value]="c.id">
+
             {{ c.nombre }}
+
           </option>
 
         </select>
 
-        <small class="error-text" *ngIf="form.idContaminante === 0">
-          Debes seleccionar un contaminante
-        </small>
       </div>
 
       <!-- BOTONES -->
@@ -107,8 +117,7 @@
         <button
           type="button"
           class="btn-secondary"
-          (click)="cerrarFormulario()"
-          [disabled]="guardando">
+          (click)="cerrarFormulario()">
 
           Cancelar
 
@@ -117,25 +126,16 @@
         <button
           type="button"
           class="btn-primary"
-          (click)="guardar()"
-          [disabled]="
-            guardando ||
-            !form.descripcion ||
-            !form.magnitud ||
-            form.idRecurso === 0 ||
-            form.idContaminante === 0
-          ">
+          (click)="guardar()">
 
-          {{ guardando
-          ? (modoEdicion ? 'Actualizando...' : 'Registrando...')
-          : (modoEdicion ? 'Actualizar' : 'Registrar')
-          }}
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
 
         </button>
 
       </div>
 
     </div>
+
   </div>
 
   <!-- TABLA -->
@@ -146,44 +146,88 @@
     </div>
 
     <table *ngIf="!cargando && eventos.length > 0">
+
       <thead>
+
       <tr>
+
         <th>ID</th>
         <th>Descripción</th>
         <th>Magnitud</th>
         <th>Recurso</th>
         <th>Contaminante</th>
         <th>Fecha</th>
-        <th>Acciones</th>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
+
       </tr>
+
       </thead>
 
       <tbody>
+
       <tr *ngFor="let e of eventos">
+
         <td>{{ e.id }}</td>
+
         <td>{{ e.descripcion }}</td>
 
         <td>
-            <span class="badge" [ngClass]="magnitudColor(e.magnitud)">
-              {{ e.magnitud }}
-            </span>
+
+          <span
+            class="badge"
+            [ngClass]="magnitudColor(e.magnitud)">
+
+            {{ e.magnitud }}
+
+          </span>
+
         </td>
 
         <td>{{ nombreRecurso(e.idRecurso) }}</td>
+
         <td>{{ nombreContaminante(e.idContaminante) }}</td>
+
         <td>{{ e.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
 
-        <td>
-          <button class="btn-edit" (click)="editar(e)">✏️</button>
-          <button class="btn-delete" (click)="eliminar(e.id!)">🗑️</button>
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <td *ngIf="!isPublico">
+
+          <button
+            class="btn-edit"
+            (click)="editar(e)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="eliminar(e.id!)">
+
+            🗑️
+
+          </button>
+
         </td>
+
       </tr>
+
       </tbody>
+
     </table>
 
-    <div class="empty" *ngIf="!cargando && eventos.length === 0">
+    <div
+      class="empty"
+      *ngIf="!cargando && eventos.length === 0">
+
       No hay eventos registrados aún.
+
     </div>
 
   </div>
+
 </div>

@@ -3,7 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ContaminanteService } from '../../core/services/contaminante.service';
-import { Contaminante, NivelContaminante } from '../../core/models/contaminante.model';
+import { AuthService } from '../../core/services/auth.service';
+
+import {
+  Contaminante,
+  NivelContaminante
+} from '../../core/models/contaminante.model';
 
 @Component({
   selector: 'app-lista-contaminantes',
@@ -15,19 +20,35 @@ import { Contaminante, NivelContaminante } from '../../core/models/contaminante.
 export class ListaContaminantesComponent implements OnInit {
 
   contaminantes: Contaminante[] = [];
+
   cargando = false;
   error = '';
 
   mostrarFormulario = false;
   modoEdicion = false;
 
+  // 🔥 CONTROL ROL
+  isPublico = false;
+
   form: Contaminante = this.formVacio();
 
-  niveles: NivelContaminante[] = ['Bajo', 'Medio', 'Alto', 'Critico'];
+  niveles: NivelContaminante[] = [
+    'Bajo',
+    'Medio',
+    'Alto',
+    'Critico'
+  ];
 
-  constructor(private contaminanteService: ContaminanteService) {}
+  constructor(
+    private contaminanteService: ContaminanteService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+
+    // 🔥 VERIFICAR ROL
+    this.isPublico = this.authService.isPublico();
+
     this.cargar();
   }
 
@@ -35,18 +56,27 @@ export class ListaContaminantesComponent implements OnInit {
   // CARGA
   // ======================
   cargar(): void {
+
     this.cargando = true;
 
     this.contaminanteService.listar().subscribe({
+
       next: (data) => {
+
         this.contaminantes = data || [];
         this.cargando = false;
+
       },
+
       error: () => {
+
         this.error = 'Error al cargar contaminantes';
         this.contaminantes = [];
+
         this.cargando = false;
+
       },
+
     });
   }
 
@@ -55,6 +85,9 @@ export class ListaContaminantesComponent implements OnInit {
   // ======================
 
   abrirFormulario(): void {
+
+    if (this.isPublico) return;
+
     this.form = this.formVacio();
     this.modoEdicion = false;
     this.mostrarFormulario = true;
@@ -62,25 +95,34 @@ export class ListaContaminantesComponent implements OnInit {
   }
 
   editar(c: Contaminante): void {
+
+    if (this.isPublico) return;
+
     this.form = { ...c };
+
     this.modoEdicion = true;
     this.mostrarFormulario = true;
+
     this.error = '';
   }
 
   cerrarFormulario(): void {
+
     this.mostrarFormulario = false;
     this.form = this.formVacio();
+
     this.error = '';
   }
 
   // ======================
-  // GUARDAR (CON VALIDACIONES)
+  // GUARDAR
   // ======================
 
   guardar(): void {
 
-    // 🔥 VALIDACIONES FRONTEND
+    if (this.isPublico) return;
+
+    // VALIDACIONES
     if (!this.form.nombre || this.form.nombre.trim().length < 3) {
       this.error = 'El nombre debe tener al menos 3 caracteres';
       return;
@@ -101,29 +143,56 @@ export class ListaContaminantesComponent implements OnInit {
       return;
     }
 
-    // limpiar espacios
     this.form.nombre = this.form.nombre.trim();
     this.form.fuenteOrigen = this.form.fuenteOrigen.trim();
 
     // ======================
-    // PETICIÓN BACKEND
+    // ACTUALIZAR
     // ======================
     if (this.modoEdicion && this.form.id) {
-      this.contaminanteService.actualizar(this.form.id, this.form).subscribe({
-        next: () => {
-          this.cargar();
-          this.cerrarFormulario();
-        },
-        error: () => (this.error = 'Error al actualizar contaminante'),
-      });
-    } else {
-      this.contaminanteService.crear(this.form).subscribe({
-        next: () => {
-          this.cargar();
-          this.cerrarFormulario();
-        },
-        error: () => (this.error = 'Error al crear contaminante'),
-      });
+
+      this.contaminanteService.actualizar(this.form.id, this.form)
+        .subscribe({
+
+          next: () => {
+
+            this.cargar();
+            this.cerrarFormulario();
+
+          },
+
+          error: () => {
+
+            this.error = 'Error al actualizar contaminante';
+
+          },
+
+        });
+
+    }
+
+    // ======================
+    // CREAR
+    // ======================
+    else {
+
+      this.contaminanteService.crear(this.form)
+        .subscribe({
+
+          next: () => {
+
+            this.cargar();
+            this.cerrarFormulario();
+
+          },
+
+          error: () => {
+
+            this.error = 'Error al crear contaminante';
+
+          },
+
+        });
     }
   }
 
@@ -131,10 +200,21 @@ export class ListaContaminantesComponent implements OnInit {
   // ELIMINAR
   // ======================
   eliminar(id: number): void {
+
+    if (this.isPublico) return;
+
     if (confirm('¿Eliminar este contaminante?')) {
+
       this.contaminanteService.eliminar(id).subscribe({
+
         next: () => this.cargar(),
-        error: () => (this.error = 'Error al eliminar'),
+
+        error: () => {
+
+          this.error = 'Error al eliminar';
+
+        },
+
       });
     }
   }
@@ -143,12 +223,16 @@ export class ListaContaminantesComponent implements OnInit {
   // UTILIDADES
   // ======================
   nivelColor(nivel: string): string {
+
     const colores: Record<string, string> = {
+
       Bajo: 'badge-verde',
       Medio: 'badge-amarillo',
       Alto: 'badge-naranja',
       Critico: 'badge-rojo',
+
     };
+
     return colores[nivel] || '';
   }
 
@@ -156,11 +240,14 @@ export class ListaContaminantesComponent implements OnInit {
   // FORM VACÍO
   // ======================
   formVacio(): Contaminante {
+
     return {
+
       nombre: '',
       carga: 0,
       nivel: 'Bajo',
       fuenteOrigen: ''
+
     };
   }
 }

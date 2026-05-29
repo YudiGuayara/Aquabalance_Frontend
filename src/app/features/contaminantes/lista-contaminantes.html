@@ -8,7 +8,9 @@
       <p>Gestiona los contaminantes registrados en el sistema</p>
     </div>
 
+    <!-- 🔥 SOLO ADMIN / OPERADOR -->
     <button
+      *ngIf="!isPublico"
       class="btn-primary"
       type="button"
       (click)="abrirFormulario()">
@@ -49,29 +51,7 @@
           [(ngModel)]="form.nombre"
           placeholder="Ej: Plomo, Mercurio"
           class="form-input"
-
-          [ngClass]="{
-            'input-error':
-              !form.nombre ||
-              (form.nombre && form.nombre.length < 3)
-          }"
         />
-
-        <small
-          class="error-text"
-          *ngIf="!form.nombre">
-
-          El nombre es obligatorio
-
-        </small>
-
-        <small
-          class="error-text"
-          *ngIf="form.nombre && form.nombre.length < 3">
-
-          El nombre debe tener mínimo 3 caracteres
-
-        </small>
 
       </div>
 
@@ -87,29 +67,7 @@
           step="0.1"
           placeholder="Ej: 12.5"
           class="form-input"
-
-          [ngClass]="{
-            'input-error':
-              form.carga == null ||
-              (form.carga != null && form.carga < 0)
-          }"
         />
-
-        <small
-          class="error-text"
-          *ngIf="form.carga == null">
-
-          La carga es obligatoria
-
-        </small>
-
-        <small
-          class="error-text"
-          *ngIf="form.carga != null && form.carga < 0">
-
-          La carga no puede ser negativa
-
-        </small>
 
       </div>
 
@@ -120,15 +78,7 @@
 
         <select
           [(ngModel)]="form.nivel"
-          class="form-input"
-
-          [ngClass]="{
-            'input-error': !form.nivel
-          }">
-
-          <option [ngValue]="null" disabled>
-            Seleccione nivel
-          </option>
+          class="form-input">
 
           <option
             *ngFor="let n of niveles"
@@ -139,14 +89,6 @@
           </option>
 
         </select>
-
-        <small
-          class="error-text"
-          *ngIf="!form.nivel">
-
-          Debes seleccionar un nivel
-
-        </small>
 
       </div>
 
@@ -160,29 +102,7 @@
           [(ngModel)]="form.fuenteOrigen"
           placeholder="Ej: Industria textil"
           class="form-input"
-
-          [ngClass]="{
-            'input-error':
-              !form.fuenteOrigen ||
-              (form.fuenteOrigen && form.fuenteOrigen.length < 3)
-          }"
         />
-
-        <small
-          class="error-text"
-          *ngIf="!form.fuenteOrigen">
-
-          La fuente de origen es obligatoria
-
-        </small>
-
-        <small
-          class="error-text"
-          *ngIf="form.fuenteOrigen && form.fuenteOrigen.length < 3">
-
-          La fuente debe tener mínimo 3 caracteres
-
-        </small>
 
       </div>
 
@@ -201,20 +121,6 @@
         <button
           type="button"
           class="btn-primary"
-
-          [disabled]="
-            !form.nombre ||
-            form.nombre.length < 3 ||
-
-            form.carga == null ||
-            form.carga < 0 ||
-
-            !form.nivel ||
-
-            !form.fuenteOrigen ||
-            form.fuenteOrigen.length < 3
-          "
-
           (click)="guardar()">
 
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
@@ -249,7 +155,11 @@
         <th>Carga</th>
         <th>Nivel</th>
         <th>Fuente</th>
-        <th>Acciones</th>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
 
       </tr>
 
@@ -285,7 +195,8 @@
           {{ c.fuenteOrigen }}
         </td>
 
-        <td>
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <td *ngIf="!isPublico">
 
           <button
             class="btn-edit"
