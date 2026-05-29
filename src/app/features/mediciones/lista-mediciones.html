@@ -8,7 +8,9 @@
       <p>Registro y monitoreo de parámetros del agua</p>
     </div>
 
+    <!-- 🔥 SOLO ADMIN / OPERADOR -->
     <button
+      *ngIf="!isPublico"
       class="btn-primary"
       type="button"
       (click)="abrirFormulario()">
@@ -241,7 +243,11 @@
         <th>pH</th>
         <th>Temperatura</th>
         <th>Fecha</th>
-        <th>Acciones</th>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
 
       </tr>
 
@@ -273,7 +279,8 @@
           {{ m.fecha | date:'short' }}
         </td>
 
-        <td>
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <td *ngIf="!isPublico">
 
           <button
             class="btn-edit"

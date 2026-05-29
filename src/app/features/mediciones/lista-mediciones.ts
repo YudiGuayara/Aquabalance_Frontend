@@ -30,6 +30,9 @@ export class ListaMedicionesComponent implements OnInit {
   mostrarFormulario = false;
   modoEdicion = false;
 
+  // 🔥 CONTROL DE ROL
+  isPublico = false;
+
   form: Medicion = this.formVacio();
 
   constructor(
@@ -40,6 +43,10 @@ export class ListaMedicionesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    // 🔥 VALIDAR ROL
+    this.isPublico = this.authService.isPublico();
+
     this.cargar();
     this.cargarRecursos();
     this.cargarContaminantes();
@@ -49,29 +56,43 @@ export class ListaMedicionesComponent implements OnInit {
   // CARGAR
   // ======================
   cargar(): void {
+
     this.cargando = true;
 
     this.medicionService.listar().subscribe({
+
       next: (data) => {
+
         this.mediciones = data || [];
         this.cargando = false;
+
       },
+
       error: () => {
+
         this.error = 'Error al cargar mediciones';
         this.cargando = false;
+
       },
+
     });
   }
 
   cargarRecursos(): void {
+
     this.recursoService.listar().subscribe({
+
       next: (data) => (this.recursos = data || [])
+
     });
   }
 
   cargarContaminantes(): void {
+
     this.contaminanteService.listar().subscribe({
+
       next: (data) => (this.contaminantes = data || [])
+
     });
   }
 
@@ -79,6 +100,9 @@ export class ListaMedicionesComponent implements OnInit {
   // FORM
   // ======================
   abrirFormulario(): void {
+
+    if (this.isPublico) return;
+
     this.form = this.formVacio();
     this.modoEdicion = false;
     this.mostrarFormulario = true;
@@ -86,6 +110,9 @@ export class ListaMedicionesComponent implements OnInit {
   }
 
   editar(m: Medicion): void {
+
+    if (this.isPublico) return;
+
     this.form = { ...m };
     this.modoEdicion = true;
     this.mostrarFormulario = true;
@@ -93,6 +120,7 @@ export class ListaMedicionesComponent implements OnInit {
   }
 
   cerrarFormulario(): void {
+
     this.mostrarFormulario = false;
     this.form = this.formVacio();
     this.error = '';
@@ -104,28 +132,38 @@ export class ListaMedicionesComponent implements OnInit {
   validar(): boolean {
 
     if (!this.form.idRecurso) {
+
       this.error = 'Debes seleccionar un recurso';
       return false;
+
     }
 
     if (!this.form.idContaminante) {
+
       this.error = 'Debes seleccionar un contaminante';
       return false;
+
     }
 
     if (this.form.ph == null) {
+
       this.error = 'El pH es obligatorio';
       return false;
+
     }
 
     if (this.form.ph < 0 || this.form.ph > 14) {
+
       this.error = 'El pH debe estar entre 0 y 14';
       return false;
+
     }
 
     if (this.form.temperatura == null) {
+
       this.error = 'La temperatura es obligatoria';
       return false;
+
     }
 
     return true;
@@ -136,42 +174,68 @@ export class ListaMedicionesComponent implements OnInit {
   // ======================
   guardar(): void {
 
+    if (this.isPublico) return;
+
     if (!this.validar()) return;
 
     this.form.idUsuario = 1;
 
     const payload = {
+
       ph: this.form.ph,
       temperatura: this.form.temperatura,
       idUsuario: this.form.idUsuario,
       idRecurso: this.form.idRecurso,
       idContaminante: this.form.idContaminante
+
     };
 
+    // ======================
+    // ACTUALIZAR
+    // ======================
     if (this.modoEdicion && this.form.id) {
 
       this.medicionService.actualizar(this.form.id, payload as any).subscribe({
+
         next: () => {
+
           this.cargar();
           this.cerrarFormulario();
+
         },
+
         error: (err) => {
+
           console.error(err);
           this.error = 'Error al actualizar medición';
+
         }
+
       });
 
-    } else {
+    }
+
+    // ======================
+    // CREAR
+    // ======================
+    else {
 
       this.medicionService.registrar(payload as any).subscribe({
+
         next: () => {
+
           this.cargar();
           this.cerrarFormulario();
+
         },
+
         error: (err) => {
+
           console.error(err);
           this.error = 'Error al registrar medición';
+
         }
+
       });
 
     }
@@ -181,10 +245,17 @@ export class ListaMedicionesComponent implements OnInit {
   // ELIMINAR
   // ======================
   eliminar(id: number): void {
+
+    if (this.isPublico) return;
+
     if (confirm('¿Eliminar esta medición?')) {
+
       this.medicionService.eliminar(id).subscribe({
+
         next: () => this.cargar(),
+
         error: () => this.error = 'Error al eliminar'
+
       });
     }
   }
@@ -193,20 +264,27 @@ export class ListaMedicionesComponent implements OnInit {
   // HELPERS
   // ======================
   nombreRecurso(id: number): string {
+
     return this.recursos.find(r => r.id === id)?.nombre || '';
+
   }
 
   nombreContaminante(id: number): string {
+
     return this.contaminantes.find(c => c.id === id)?.nombre || '';
+
   }
 
   formVacio(): Medicion {
+
     return {
+
       ph: 7,
       temperatura: 20,
       idUsuario: 1,
       idRecurso: 0,
       idContaminante: 0
+
     };
   }
 }
