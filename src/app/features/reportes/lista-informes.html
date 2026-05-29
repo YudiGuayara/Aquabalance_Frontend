@@ -2,54 +2,141 @@
 
   <!-- HEADER -->
   <div class="page-header">
-
     <div>
       <h2>📄 Reportes e Informes</h2>
-      <p>Estadísticas y reportes del sistema AquaBalance</p>
+      <p>Estadísticas y consolidado del sistema AquaBalance</p>
     </div>
 
     <div class="header-actions">
-
-      <button
-        class="btn-tab"
-        (click)="vistaActual = 'informes'"
-        [class.active]="vistaActual === 'informes'">
-
+      <button class="btn-tab"
+              (click)="vistaActual = 'informes'"
+              [class.active]="vistaActual === 'informes'">
         📋 Informes
-
       </button>
 
-      <button
-        class="btn-tab"
-        (click)="vistaActual = 'estadisticas'"
-        [class.active]="vistaActual === 'estadisticas'">
-
+      <button class="btn-tab"
+              (click)="vistaActual = 'estadisticas'"
+              [class.active]="vistaActual === 'estadisticas'">
         📊 Estadísticas
-
       </button>
 
-      <button
-        class="btn-pdf"
-        (click)="exportarPDF()">
-
-        🖨️ Exportar PDF
-
+      <button class="btn-pdf" (click)="exportarPDF()">
+        🖨️ PDF
       </button>
 
+      <button class="btn-primary" (click)="abrirFormulario()">
+        + Nuevo
+      </button>
     </div>
-
   </div>
 
   <!-- ERROR -->
-  <div
-    class="error-msg"
-    *ngIf="error">
-
+  <div class="error-msg" *ngIf="error">
     {{ error }}
-
   </div>
 
-  <!-- INFORMES -->
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="mostrarFormulario">
+    <div class="modal">
+
+      <h3>
+        {{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}
+      </h3>
+
+      <div class="error-msg"
+           *ngIf="errorModal"
+           style="margin-bottom:16px">
+        {{ errorModal }}
+      </div>
+
+      <!-- TÍTULO -->
+      <div class="field">
+        <label>📝 Título</label>
+        <input type="text"
+               [(ngModel)]="form.titulo"
+               placeholder="Ej: Informe Mayo 2026">
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div class="field">
+        <label>📄 Descripción</label>
+        <textarea rows="3"
+                  [(ngModel)]="form.descripcion"
+                  placeholder="Descripción del informe...">
+        </textarea>
+      </div>
+
+      <!-- RECURSO -->
+      <div class="field">
+        <label>💧 Recurso Hídrico</label>
+
+        <div class="select-box">
+          <select [(ngModel)]="form.recursoId">
+            <option [ngValue]="0" disabled>
+              Seleccionar recurso
+            </option>
+
+            <option *ngFor="let r of recursos"
+                    [ngValue]="r.id">
+              {{ r.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CONTAMINANTE -->
+      <div class="field">
+        <label>🧪 Contaminante</label>
+
+        <div class="select-box">
+          <select [(ngModel)]="form.contaminanteId">
+            <option [ngValue]="0" disabled>
+              Seleccionar contaminante
+            </option>
+
+            <option *ngFor="let c of contaminantes"
+                    [ngValue]="c.id">
+              {{ c.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- FECHAS -->
+      <div class="field">
+        <label>📅 Fecha Inicio</label>
+        <input type="datetime-local"
+               [(ngModel)]="form.fechaInicio">
+      </div>
+
+      <div class="field">
+        <label>📅 Fecha Fin</label>
+        <input type="datetime-local"
+               [(ngModel)]="form.fechaFin">
+      </div>
+
+      <!-- BOTONES -->
+      <div class="modal-actions">
+
+        <button class="btn-secondary"
+                (click)="cerrarFormulario()">
+          Cancelar
+        </button>
+
+        <button class="btn-primary"
+                (click)="guardar()">
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================= -->
+  <!-- VISTA INFORMES -->
+  <!-- ========================= -->
+
   <div *ngIf="vistaActual === 'informes'">
 
     <h3 class="seccion-titulo">
@@ -58,21 +145,14 @@
 
     <div class="table-container">
 
-      <div
-        class="loading"
-        *ngIf="cargando">
-
+      <div class="loading" *ngIf="cargando">
         Cargando...
-
       </div>
 
-      <table
-        *ngIf="!cargando && informes.length > 0">
+      <table *ngIf="!cargando && informes.length > 0">
 
         <thead>
-
         <tr>
-
           <th>ID</th>
           <th>Título</th>
           <th>Recurso</th>
@@ -80,9 +160,7 @@
           <th>Período</th>
           <th>Generado</th>
           <th>Acciones</th>
-
         </tr>
-
         </thead>
 
         <tbody>
@@ -98,25 +176,34 @@
           <td>{{ i.nombreContaminante }}</td>
 
           <td>
-            {{ i.fechaInicio | date:'dd/MM/yy' }}
+            {{ informeDetalleFechas.inicio | date:'dd/MM/yy' }}
             →
-            {{ i.fechaFin | date:'dd/MM/yy' }}
+            {{ informeDetalleFechas.fin | date:'dd/MM/yy' }}
           </td>
 
           <td>
-            {{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}
+            {{ informeDetalleFechas.generacion | date:'dd/MM/yyyy HH:mm' }}
           </td>
 
           <td>
+            <div class="acciones">
 
-            <button
-              class="btn-stats"
-              (click)="verEstadisticas(i.id!)">
+              <button class="btn-stats"
+                      (click)="verEstadisticas(i.id!)">
+                📊 Ver stats
+              </button>
 
-              📊 Ver estadísticas
+              <button class="btn-secondary btn-sm"
+                      (click)="abrirEdicion(i)">
+                ✏️
+              </button>
 
-            </button>
+              <button class="btn-delete"
+                      (click)="eliminar(i.id!)">
+                🗑️
+              </button>
 
+            </div>
           </td>
 
         </tr>
@@ -125,11 +212,10 @@
 
       </table>
 
-      <div
-        class="empty"
-        *ngIf="!cargando && informes.length === 0">
+      <div class="empty"
+           *ngIf="!cargando && informes.length === 0">
 
-        No hay informes registrados.
+        No hay informes registrados aún.
 
       </div>
 
@@ -137,55 +223,76 @@
 
   </div>
 
+  <!-- ========================= -->
   <!-- ESTADÍSTICAS -->
+  <!-- ========================= -->
+
   <div *ngIf="vistaActual === 'estadisticas'">
 
-    <div
-      class="loading"
-      *ngIf="cargandoDetalle">
-
+    <div class="loading" *ngIf="cargandoDetalle">
       Cargando estadísticas...
-
     </div>
 
-    <ng-container
-      *ngIf="!cargandoDetalle && informeDetalle">
+    <ng-container *ngIf="!cargandoDetalle && informeDetalle">
 
-      <!-- SELECT -->
+      <!-- SELECTOR -->
       <div class="field selector-informe">
 
         <label>
           Selecciona un informe:
         </label>
 
-        <select
-          (change)="onCambiarInforme($event)">
+        <div class="select-box" style="flex:1">
 
-          <option
-            *ngFor="let i of informes"
-            [value]="i.id"
-            [selected]="i.id === informeSeleccionadoId">
+          <select (change)="onCambiarInforme($event)">
 
-            {{ i.titulo }}
+            <option *ngFor="let i of informes"
+                    [value]="i.id"
+                    [selected]="i.id === informeSeleccionadoId">
 
-          </option>
+              {{ i.titulo }}
+              —
+              {{ i.nombreRecurso }}
+              ·
+              {{ i.nombreContaminante }}
 
-        </select>
+            </option>
+
+          </select>
+
+        </div>
 
       </div>
 
-      <!-- HEADER -->
+      <!-- CABECERA -->
       <div class="informe-cabecera">
 
-        <div>
+        <div class="informe-cabecera-left">
 
-          <h3>
-            {{ informeDetalle.titulo }}
-          </h3>
+          <h3>{{ informeDetalle.titulo }}</h3>
 
-          <p>
+          <p *ngIf="informeDetalle.descripcion">
             {{ informeDetalle.descripcion }}
           </p>
+
+          <p class="informe-periodo">
+            📅
+            {{ informeDetalleFechas.inicio | date:'dd/MM/yyyy HH:mm' }}
+            →
+            {{ informeDetalleFechas.fin | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+
+        </div>
+
+        <div class="informe-cabecera-right">
+
+          <span class="informe-recurso-badge">
+            💧 {{ informeDetalle.nombreRecurso }}
+          </span>
+
+          <span class="informe-contaminante-badge">
+            🧪 {{ informeDetalle.nombreContaminante }}
+          </span>
 
         </div>
 
@@ -194,32 +301,66 @@
       <!-- SCORE -->
       <ng-container *ngIf="scoreCalidad as sc">
 
-        <div
-          class="score-card"
-          [ngClass]="scoreCircleClase(sc.clasificacion)">
+        <div class="score-card"
+             [ngClass]="scoreCircleClase(sc.clasificacion)">
 
-          <div class="score-circle">
+          <div class="score-circle-wrap">
 
-            <span class="score-num">
-              {{ sc.score }}
-            </span>
+            <div class="score-circle">
 
-            <span class="score-sub">
-              /100
-            </span>
+              <span class="score-num">
+                {{ sc.score }}
+              </span>
+
+              <span class="score-sub">
+                / 100
+              </span>
+
+            </div>
 
           </div>
 
           <div class="score-content">
 
-            <h3>
-              Calidad:
+            <div class="score-title">
+              Calidad hídrica:
               {{ sc.clasificacion }}
-            </h3>
+            </div>
 
-            <p>
+            <p class="score-desc">
               {{ sc.descripcion }}
             </p>
+
+          </div>
+
+          <div class="score-params">
+
+            <div class="sp-item sp-ok">
+              <div class="sp-num">
+                {{ sc.parametrosOk }}
+              </div>
+              <div class="sp-lbl">
+                Normales
+              </div>
+            </div>
+
+            <div class="sp-item sp-warn">
+              <div class="sp-num">
+                {{ sc.parametrosWarn }}
+              </div>
+              <div class="sp-lbl">
+                En alerta
+              </div>
+            </div>
+
+            <div class="sp-item sp-danger">
+              <div class="sp-num">
+                {{ sc.parametrosDanger }}
+              </div>
+              <div class="sp-lbl">
+                Críticos
+              </div>
+            </div>
 
           </div>
 
@@ -227,9 +368,9 @@
 
       </ng-container>
 
-      <!-- RESUMEN -->
       <ng-container *ngIf="estadisticas">
 
+        <!-- RESUMEN -->
         <h3 class="seccion-titulo">
           Resumen General
         </h3>
@@ -237,39 +378,53 @@
         <div class="stats-grid">
 
           <div class="stat-card">
-
+            <div class="stat-icono">📊</div>
             <div class="stat-numero">
               {{ estadisticas.totalMediciones }}
             </div>
-
             <div class="stat-label">
               Mediciones
             </div>
-
           </div>
 
           <div class="stat-card">
-
+            <div class="stat-icono">🚨</div>
             <div class="stat-numero">
               {{ estadisticas.totalEventos }}
             </div>
-
             <div class="stat-label">
               Eventos
             </div>
-
           </div>
 
           <div class="stat-card">
-
+            <div class="stat-icono">⚠️</div>
             <div class="stat-numero">
               {{ estadisticas.totalAlertas }}
             </div>
-
             <div class="stat-label">
               Alertas
             </div>
+          </div>
 
+          <div class="stat-card">
+            <div class="stat-icono">🧪</div>
+            <div class="stat-numero">
+              {{ estadisticas.promedioPh }}
+            </div>
+            <div class="stat-label">
+              pH promedio
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icono">🌡️</div>
+            <div class="stat-numero">
+              {{ estadisticas.promedioTemperatura }}°C
+            </div>
+            <div class="stat-label">
+              Temp. promedio
+            </div>
           </div>
 
         </div>
@@ -277,6 +432,14 @@
       </ng-container>
 
     </ng-container>
+
+    <!-- EMPTY -->
+    <div class="empty"
+         *ngIf="!cargandoDetalle && !informeDetalle">
+
+      Crea un informe para ver sus estadísticas.
+
+    </div>
 
   </div>
 
