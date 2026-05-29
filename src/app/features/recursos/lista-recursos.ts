@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { RecursoService } from '../../core/services/recurso.service';
+import { AuthService } from '../../core/services/auth.service';
+
 import { Recurso, TipoRecurso } from '../../core/models/recurso.model';
 
 @Component({
@@ -14,17 +17,36 @@ import { Recurso, TipoRecurso } from '../../core/models/recurso.model';
 export class ListaRecursosComponent implements OnInit {
 
   recursos: Recurso[] = [];
+
   cargando = false;
   error = '';
+
   mostrarFormulario = false;
   modoEdicion = false;
 
-  form: Recurso = this.formVacio();
-  tiposRecurso: TipoRecurso[] = ['Rio', 'Lago', 'Planta', 'Embalse', 'Acuifero'];
+  // 🔥 CONTROL DE ROL
+  isPublico = false;
 
-  constructor(private recursoService: RecursoService) {}
+  form: Recurso = this.formVacio();
+
+  tiposRecurso: TipoRecurso[] = [
+    'Rio',
+    'Lago',
+    'Planta',
+    'Embalse',
+    'Acuifero'
+  ];
+
+  constructor(
+    private recursoService: RecursoService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+
+    // 🔥 VERIFICAR ROL
+    this.isPublico = this.authService.isPublico();
+
     this.cargarRecursos();
   }
 
@@ -39,17 +61,21 @@ export class ListaRecursosComponent implements OnInit {
     this.recursoService.listar().subscribe({
 
       next: (data) => {
+
         this.recursos = data || [];
         this.cargando = false;
+
       },
 
       error: (err) => {
+
         console.error(err);
 
         this.error = 'Error al cargar recursos';
         this.recursos = [];
 
         this.cargando = false;
+
       }
 
     });
@@ -59,29 +85,38 @@ export class ListaRecursosComponent implements OnInit {
   // FORMULARIO
   // =========================
   abrirFormulario(): void {
+
+    if (this.isPublico) return;
+
     this.form = this.formVacio();
     this.modoEdicion = false;
     this.mostrarFormulario = true;
   }
 
   editar(recurso: Recurso): void {
+
+    if (this.isPublico) return;
+
     this.form = { ...recurso };
     this.modoEdicion = true;
     this.mostrarFormulario = true;
   }
 
   cerrarFormulario(): void {
+
     this.mostrarFormulario = false;
     this.form = this.formVacio();
     this.error = '';
   }
 
   // =========================
-  // GUARDAR CON VALIDACIONES
+  // GUARDAR
   // =========================
   guardar(): void {
 
-    // 🔥 VALIDACIONES FRONT
+    if (this.isPublico) return;
+
+    // VALIDACIONES
     if (!this.form.nombre || this.form.nombre.trim().length < 3) {
       this.error = 'El nombre debe tener al menos 3 caracteres';
       return;
@@ -107,30 +142,52 @@ export class ListaRecursosComponent implements OnInit {
       return;
     }
 
-    // limpiar error
     this.error = '';
 
     // =========================
-    // ACTUALIZAR / CREAR
+    // ACTUALIZAR
     // =========================
     if (this.modoEdicion && this.form.id) {
 
       this.recursoService.actualizar(this.form.id, this.form).subscribe({
+
         next: () => {
+
           this.cargarRecursos();
           this.cerrarFormulario();
+
         },
-        error: () => (this.error = 'Error al actualizar recurso'),
+
+        error: () => {
+
+          this.error = 'Error al actualizar recurso';
+
+        }
+
       });
 
-    } else {
+    }
+
+    // =========================
+    // CREAR
+    // =========================
+    else {
 
       this.recursoService.crear(this.form).subscribe({
+
         next: () => {
+
           this.cargarRecursos();
           this.cerrarFormulario();
+
         },
-        error: () => (this.error = 'Error al crear recurso'),
+
+        error: () => {
+
+          this.error = 'Error al crear recurso';
+
+        }
+
       });
     }
   }
@@ -139,10 +196,21 @@ export class ListaRecursosComponent implements OnInit {
   // ELIMINAR
   // =========================
   eliminar(id: number): void {
+
+    if (this.isPublico) return;
+
     if (confirm('¿Eliminar este recurso?')) {
+
       this.recursoService.eliminar(id).subscribe({
+
         next: () => this.cargarRecursos(),
-        error: () => (this.error = 'Error al eliminar recurso'),
+
+        error: () => {
+
+          this.error = 'Error al eliminar recurso';
+
+        }
+
       });
     }
   }
@@ -151,12 +219,15 @@ export class ListaRecursosComponent implements OnInit {
   // UTIL
   // =========================
   formVacio(): Recurso {
+
     return {
+
       nombre: '',
       tipo: 'Rio',
       ubicacion: '',
       latitud: 0,
       longitud: 0
+
     };
   }
 }

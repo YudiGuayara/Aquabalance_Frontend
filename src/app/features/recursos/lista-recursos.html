@@ -8,7 +8,9 @@
       <p>Gestiona los recursos de agua del sistema</p>
     </div>
 
+    <!-- 🔥 SOLO ADMIN / OPERADOR -->
     <button
+      *ngIf="!isPublico"
       class="btn-primary"
       type="button"
       (click)="abrirFormulario()">
@@ -19,7 +21,7 @@
 
   </div>
 
-  <!-- ERROR GLOBAL -->
+  <!-- ERROR -->
   <div
     class="error"
     *ngIf="error && !mostrarFormulario">
@@ -80,7 +82,6 @@
 
         <select
           [(ngModel)]="form.tipo"
-
           [class.input-error]="!form.tipo">
 
           <option [ngValue]="null" disabled>
@@ -96,14 +97,6 @@
           </option>
 
         </select>
-
-        <small
-          class="error-text"
-          *ngIf="!form.tipo">
-
-          Debes seleccionar un tipo
-
-        </small>
 
       </div>
 
@@ -123,25 +116,9 @@
           "
         />
 
-        <small
-          class="error-text"
-          *ngIf="!form.ubicacion">
-
-          La ubicación es obligatoria
-
-        </small>
-
-        <small
-          class="error-text"
-          *ngIf="form.ubicacion && form.ubicacion.length < 3">
-
-          La ubicación debe tener mínimo 3 caracteres
-
-        </small>
-
       </div>
 
-      <!-- LATITUD Y LONGITUD -->
+      <!-- LAT/LONG -->
       <div class="field-row">
 
         <!-- LATITUD -->
@@ -154,32 +131,7 @@
             [(ngModel)]="form.latitud"
             step="0.0001"
             placeholder="Ej: 4.6097"
-
-            [class.input-error]="
-              form.latitud == null ||
-              form.latitud < -90 ||
-              form.latitud > 90
-            "
           />
-
-          <small
-            class="error-text"
-            *ngIf="form.latitud == null">
-
-            La latitud es obligatoria
-
-          </small>
-
-          <small
-            class="error-text"
-            *ngIf="
-              form.latitud != null &&
-              (form.latitud < -90 || form.latitud > 90)
-            ">
-
-            La latitud debe estar entre -90 y 90
-
-          </small>
 
         </div>
 
@@ -193,32 +145,7 @@
             [(ngModel)]="form.longitud"
             step="0.0001"
             placeholder="Ej: -74.0817"
-
-            [class.input-error]="
-              form.longitud == null ||
-              form.longitud < -180 ||
-              form.longitud > 180
-            "
           />
-
-          <small
-            class="error-text"
-            *ngIf="form.longitud == null">
-
-            La longitud es obligatoria
-
-          </small>
-
-          <small
-            class="error-text"
-            *ngIf="
-              form.longitud != null &&
-              (form.longitud < -180 || form.longitud > 180)
-            ">
-
-            La longitud debe estar entre -180 y 180
-
-          </small>
 
         </div>
 
@@ -239,25 +166,6 @@
         <button
           type="button"
           class="btn-primary"
-
-          [disabled]="
-            !form.nombre ||
-            form.nombre.length < 3 ||
-
-            !form.tipo ||
-
-            !form.ubicacion ||
-            form.ubicacion.length < 3 ||
-
-            form.latitud == null ||
-            form.latitud < -90 ||
-            form.latitud > 90 ||
-
-            form.longitud == null ||
-            form.longitud < -180 ||
-            form.longitud > 180
-          "
-
           (click)="guardar()">
 
           {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
@@ -293,7 +201,11 @@
         <th>Ubicación</th>
         <th>Latitud</th>
         <th>Longitud</th>
-        <th>Acciones</th>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
 
       </tr>
 
@@ -310,26 +222,19 @@
         </td>
 
         <td>
-
           <span class="badge">
             {{ r.tipo }}
           </span>
-
         </td>
 
-        <td>
-          {{ r.ubicacion }}
-        </td>
+        <td>{{ r.ubicacion }}</td>
 
-        <td>
-          {{ r.latitud }}
-        </td>
+        <td>{{ r.latitud }}</td>
 
-        <td>
-          {{ r.longitud }}
-        </td>
+        <td>{{ r.longitud }}</td>
 
-        <td>
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <td *ngIf="!isPublico">
 
           <button
             class="btn-edit"
