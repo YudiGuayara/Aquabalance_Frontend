@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { InformeService } from '../../core/services/informe.service';
 import { RecursoService } from '../../core/services/recurso.service';
 import { ContaminanteService } from '../../core/services/contaminante.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   Informe,
   Estadisticas,
@@ -36,6 +37,9 @@ export class ListaInformesComponent implements OnInit {
   informeSeleccionadoId: number | null = null;
   informeDetalle: Informe | null = null;
 
+  // 🔹 CONTROL DE ROL
+  isPublico = false;
+
   form: Informe = this.formVacio();
 
   private readonly UMBRALES = {
@@ -54,9 +58,13 @@ export class ListaInformesComponent implements OnInit {
     private informeService: InformeService,
     private recursoService: RecursoService,
     private contaminanteService: ContaminanteService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
+    // 🔹 VERIFICAR ROL
+    this.isPublico = this.authService.isPublico();
+
     this.cargar();
     this.cargarRecursos();
     this.cargarContaminantes();
@@ -89,8 +97,6 @@ export class ListaInformesComponent implements OnInit {
     this.informeDetalle = null;
     this.informeService.buscarPorId(id).subscribe({
       next: (data) => {
-        console.log('Detalle recibido:', data);
-        console.log('Estadísticas:', (data as any).estadisticas);
         this.informeDetalle = data;
         this.cargandoDetalle = false;
       },
@@ -132,6 +138,7 @@ export class ListaInformesComponent implements OnInit {
   // ─── FORMULARIO ──────────────────────────────────────────────
 
   abrirFormulario(): void {
+    if (this.isPublico) return;
     this.form = this.formVacio();
     this.modoEdicion = false;
     this.errorModal = '';
@@ -139,6 +146,7 @@ export class ListaInformesComponent implements OnInit {
   }
 
   abrirEdicion(informe: Informe): void {
+    if (this.isPublico) return;
     this.form = {
       id: informe.id,
       titulo: informe.titulo,
@@ -177,6 +185,7 @@ export class ListaInformesComponent implements OnInit {
   }
 
   guardar(): void {
+    if (this.isPublico) return;
     this.errorModal = '';
 
     if (!this.form.titulo?.trim())                                   { this.errorModal = 'El título es obligatorio'; return; }
@@ -218,6 +227,7 @@ export class ListaInformesComponent implements OnInit {
   }
 
   eliminar(id: number): void {
+    if (this.isPublico) return;
     if (confirm('¿Eliminar este informe?')) {
       this.informeService.eliminar(id).subscribe({
         next: () => {
@@ -257,7 +267,6 @@ export class ListaInformesComponent implements OnInit {
     return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
   }
 
-  // Para el template HTML (fechas del informe detalle)
   get informeDetalleFechas(): { inicio: Date | null; fin: Date | null; generacion: Date | null } {
     if (!this.informeDetalle) return { inicio: null, fin: null, generacion: null };
     const inf = this.informeDetalle as any;
