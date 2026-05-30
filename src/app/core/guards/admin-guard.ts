@@ -14,3 +14,16 @@ export const adminGuard: CanActivateFn = () => {
   router.navigate(['/dashboard/home']);
   return false;
 };
+
+// 🔹 Bloquea al UsuarioPublico — solo Admin y Operador
+export const noPublicoGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router      = inject(Router);
+
+  if (!authService.isPublico()) {
+    return true;
+  }
+
+  router.navigate(['/dashboard/home']);
+  return false;
+};

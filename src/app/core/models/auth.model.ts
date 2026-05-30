@@ -11,7 +11,7 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
-  id: number;
+  id: number;       // ✅ agregado
   token: string;
   email: string;
   nombre: string;

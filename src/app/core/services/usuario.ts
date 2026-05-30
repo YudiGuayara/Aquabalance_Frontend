@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.model';
-import { API_CONFIG } from '../config/api.config';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
 
-  private url = `${API_CONFIG.BASE_URL}/api/usuarios`;
+  private url = `${environment.apiUrl}/api/usuarios`;
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +23,7 @@ export class UsuarioService {
     return this.http.post<Usuario>(this.url, usuario);
   }
 
-  actualizar(id: number, usuario: Usuario): Observable<Usuario> {
+  actualizar(id: number, usuario: Partial<Usuario>): Observable<Usuario> {
     return this.http.put<Usuario>(`${this.url}/${id}`, usuario);
   }
 

@@ -18,18 +18,18 @@ export class ListaUsuariosComponent implements OnInit {
   error      = '';
   busqueda   = '';
 
-  // Modal
   modalAbierto = false;
   modoEdicion  = false;
   usuarioForm: Usuario = this.formVacio();
+
+  // ✅ roles disponibles
+  roles = ['Administrador', 'Operador', 'UsuarioPublico'];
 
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit(): void {
     this.cargar();
   }
-
-  // ── Carga ────────────────────────────────────────────────────
 
   cargar(): void {
     this.cargando = true;
@@ -39,8 +39,6 @@ export class ListaUsuariosComponent implements OnInit {
       error: () => { this.error = 'Error al cargar usuarios.'; this.cargando = false; },
     });
   }
-
-  // ── Filtro ───────────────────────────────────────────────────
 
   get usuariosFiltrados(): Usuario[] {
     const q = this.busqueda.toLowerCase().trim();
@@ -52,17 +50,17 @@ export class ListaUsuariosComponent implements OnInit {
     );
   }
 
-  // ── Modal ────────────────────────────────────────────────────
-
   abrirCrear(): void {
     this.modoEdicion  = false;
     this.usuarioForm  = this.formVacio();
+    this.error        = '';
     this.modalAbierto = true;
   }
 
   abrirEditar(u: Usuario): void {
     this.modoEdicion  = true;
     this.usuarioForm  = { ...u, password: '' };
+    this.error        = '';
     this.modalAbierto = true;
   }
 
@@ -72,12 +70,21 @@ export class ListaUsuariosComponent implements OnInit {
     this.error        = '';
   }
 
-  // ── CRUD ─────────────────────────────────────────────────────
-
   guardar(): void {
+    this.error = '';
+
+    if (!this.usuarioForm.nombre?.trim()) {
+      this.error = 'El nombre es obligatorio'; return;
+    }
+    if (!this.usuarioForm.email?.trim()) {
+      this.error = 'El email es obligatorio'; return;
+    }
+    if (!this.modoEdicion && !this.usuarioForm.password?.trim()) {
+      this.error = 'La contraseña es obligatoria'; return;
+    }
+
     if (this.modoEdicion && this.usuarioForm.id) {
-      // Si no escribió contraseña, no la mandamos
-      const payload = { ...this.usuarioForm };
+      const payload: Partial<Usuario> = { ...this.usuarioForm };
       if (!payload.password) delete payload.password;
 
       this.usuarioService.actualizar(this.usuarioForm.id, payload).subscribe({
@@ -107,8 +114,6 @@ export class ListaUsuariosComponent implements OnInit {
     });
   }
 
-  // ── Helpers ──────────────────────────────────────────────────
-
   private formVacio(): Usuario {
     return { nombre: '', email: '', password: '', rol: 'Operador', activo: true };
   }
@@ -119,9 +124,19 @@ export class ListaUsuariosComponent implements OnInit {
 
   badgeRol(rol: string): string {
     const m: Record<string, string> = {
-      Administrador: 'badge-admin',
-      Operador:      'badge-operador',
+      Administrador:  'badge-admin',
+      Operador:       'badge-operador',
+      UsuarioPublico: 'badge-publico',  // ✅
     };
     return m[rol] ?? 'badge-default';
+  }
+
+  labelRol(rol: string): string {
+    const m: Record<string, string> = {
+      Administrador:  'Administrador',
+      Operador:       'Operador',
+      UsuarioPublico: 'Usuario Público',  // ✅
+    };
+    return m[rol] ?? rol;
   }
 }

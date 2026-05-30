@@ -17,16 +17,20 @@
               [class.active]="vistaActual === 'estadisticas'">
         📊 Estadísticas
       </button>
+
+      <!-- 🔹 PDF: todos los roles pueden imprimir -->
       <button class="btn-pdf" (click)="exportarPDF()">🖨️ PDF</button>
-      <button class="btn-primary" (click)="abrirFormulario()">+ Nuevo</button>
+
+      <!-- 🔹 SOLO ADMIN / OPERADOR pueden crear -->
+      <button *ngIf="!isPublico" class="btn-primary" (click)="abrirFormulario()">+ Nuevo</button>
     </div>
   </div>
 
   <!-- ERROR GLOBAL -->
   <div class="error-msg" *ngIf="error">{{ error }}</div>
 
-  <!-- MODAL -->
-  <div class="modal-overlay" *ngIf="mostrarFormulario">
+  <!-- MODAL: solo Admin / Operador pueden abrirlo -->
+  <div class="modal-overlay" *ngIf="mostrarFormulario && !isPublico">
     <div class="modal">
       <h3>{{ modoEdicion ? '✏️ Editar Informe' : '📄 Nuevo Informe' }}</h3>
 
@@ -112,13 +116,22 @@
             {{ i.fechaFin | date:'dd/MM/yy' }}
           </td>
           <td>{{ i.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</td>
+
+          <!-- 🔹 La columna siempre existe, pero los botones varían por rol -->
           <td>
             <div class="acciones">
+
+              <!-- 🔹 Todos los roles pueden ver estadísticas -->
               <button class="btn-stats" (click)="verEstadisticas(i.id!)">
                 📊 Ver stats
               </button>
-              <button class="btn-secondary btn-sm" (click)="abrirEdicion(i)">✏️</button>
-              <button class="btn-delete" (click)="eliminar(i.id!)">🗑️</button>
+
+              <!-- 🔹 Solo Admin / Operador pueden editar y eliminar -->
+              <ng-container *ngIf="!isPublico">
+                <button class="btn-secondary btn-sm" (click)="abrirEdicion(i)">✏️</button>
+                <button class="btn-delete" (click)="eliminar(i.id!)">🗑️</button>
+              </ng-container>
+
             </div>
           </td>
         </tr>
