@@ -6,11 +6,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
 import { Notificacion } from '../../core/models/notificacion.model';
 import { Observable } from 'rxjs';
+import { NetworkStatusComponent } from '../../shared/network-status/network-status.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterOutlet, RouterLinkActive, NetworkStatusComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
