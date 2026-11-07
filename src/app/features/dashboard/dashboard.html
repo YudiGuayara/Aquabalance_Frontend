@@ -30,6 +30,7 @@
         <span>🚨</span> Eventos
       </a>
       <a routerLink="alertas" routerLinkActive="active" class="nav-item">
+
         <span>⚠️</span> Alertas
       </a>
 
@@ -44,6 +45,11 @@
         <span>🗺️</span> Mapa
       </a>
 
+      <p class="nav-section">Red</p>
+      <a routerLink="red" routerLinkActive="active" class="nav-item">
+        <span>📡</span> Red de estaciones
+      </a>
+
       <ng-container *ngIf="esAdmin()">
         <p class="nav-section">Administración</p>
         <a routerLink="usuarios" routerLinkActive="active" class="nav-item">
@@ -56,6 +62,7 @@
   </aside>
 
   <div class="main">
+
 
     <header class="topbar">
       <div class="topbar-left">
@@ -89,6 +96,7 @@
             </div>
 
             <div class="panel-lista" *ngIf="notificaciones$ | async as lista">
+
               <ng-container *ngIf="lista.length > 0; else sinNotif">
                 <div class="panel-item"
                      *ngFor="let n of lista.slice(0, 8)"
@@ -121,6 +129,7 @@
               </button>
             </div>
           </div>
+
         </div>
 
         <span class="usuario-nombre">{{ usuario?.nombre || 'Usuario' }}</span>

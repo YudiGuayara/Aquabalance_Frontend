@@ -30,6 +30,7 @@ export const dashboardRoutes: Routes = [
         path: 'mediciones',
         loadComponent: () =>
           import('../mediciones/lista-mediciones').then(m => m.ListaMedicionesComponent),
+
       },
       {
         path: 'eventos',
@@ -60,6 +61,12 @@ export const dashboardRoutes: Routes = [
         loadComponent: () =>
           import('../notificaciones/lista-notificaciones')
             .then(m => m.ListaNotificacionesComponent),
+      },
+      {
+
+        path: 'red',
+        loadComponent: () =>
+          import('../red/estaciones-red').then(m => m.EstacionesRedComponent),
       },
       // ── NUEVO ──────────────────────────────────────────────
       {
