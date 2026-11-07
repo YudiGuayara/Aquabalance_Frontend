@@ -23,6 +23,8 @@ export class LoginComponent {
 
   cargando: boolean = false;
 
+  verPassword: boolean = false;
+
   constructor(
     private authService: AuthService,
     private router: Router

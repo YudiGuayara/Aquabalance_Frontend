@@ -1,60 +1,61 @@
 <div class="layout">
 
-  <aside class="sidebar">
+  <div class="scrim" [class.visible]="menuAbierto" (click)="cerrarMenu()"></div>
+
+  <aside class="sidebar" [class.abierto]="menuAbierto">
 
     <div class="sidebar-brand">
-      <span class="brand-icon">💧</span>
+      <img src="/Logotipo2.png" class="brand-logo" alt="">
       <span class="brand-name">AquaBalance</span>
     </div>
 
     <nav class="sidebar-nav">
 
       <p class="nav-section">Inicio</p>
-      <a routerLink="home" routerLinkActive="active" class="nav-item">
-        <span>🏠</span> Inicio
+      <a routerLink="home" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span class="nav-texto">Inicio</span>
       </a>
 
       <p class="nav-section">Monitoreo</p>
-      <a routerLink="recursos" routerLinkActive="active" class="nav-item">
-        <span>🏞️</span> Recursos
+      <a routerLink="recursos" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg><span class="nav-texto">Recursos</span>
       </a>
-      <a routerLink="contaminantes" routerLinkActive="active" class="nav-item">
-        <span>☣️</span> Contaminantes
+      <a routerLink="contaminantes" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3"/></svg><span class="nav-texto">Contaminantes</span>
       </a>
-      <a routerLink="mediciones" routerLinkActive="active" class="nav-item">
-        <span>📊</span> Mediciones
+      <a routerLink="mediciones" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span class="nav-texto">Mediciones</span>
       </a>
 
       <p class="nav-section">Alertas</p>
-      <a routerLink="eventos" routerLinkActive="active" class="nav-item">
-        <span>🚨</span> Eventos
+      <a routerLink="eventos" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span class="nav-texto">Eventos</span>
       </a>
-      <a routerLink="alertas" routerLinkActive="active" class="nav-item">
-
-        <span>⚠️</span> Alertas
+      <a routerLink="alertas" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/></svg><span class="nav-texto">Alertas</span>
       </a>
 
       <p class="nav-section">Reportes</p>
-      <a routerLink="reportes" routerLinkActive="active" class="nav-item">
-        <span>📄</span> Informes
+      <a routerLink="reportes" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg><span class="nav-texto">Informes</span>
       </a>
-      <a routerLink="clima" routerLinkActive="active" class="nav-item">
-        <span>🌦️</span> Clima
+      <a routerLink="clima" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 1 1 .6-7.95A5.5 5.5 0 0 1 18 11.5 3.25 3.25 0 0 1 17.5 18z"/></svg><span class="nav-texto">Clima</span>
       </a>
-      <a routerLink="mapa" routerLinkActive="active" class="nav-item">
-        <span>🗺️</span> Mapa
+      <a routerLink="mapa" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span class="nav-texto">Mapa</span>
       </a>
 
       <p class="nav-section">Red</p>
-      <a routerLink="red" routerLinkActive="active" class="nav-item">
-        <span>📡</span> Red de estaciones
+      <a routerLink="red" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><path d="M12 20v.01"/></svg><span class="nav-texto">Red de estaciones</span>
       </a>
 
       <ng-container *ngIf="esAdmin()">
         <p class="nav-section">Administración</p>
-        <a routerLink="usuarios" routerLinkActive="active" class="nav-item">
-          <span>👥</span> Usuarios
-        </a>
+      <a routerLink="usuarios" routerLinkActive="active" class="nav-item" (click)="cerrarMenu()">
+        <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg><span class="nav-texto">Usuarios</span>
+      </a>
       </ng-container>
 
     </nav>
@@ -66,6 +67,10 @@
 
     <header class="topbar">
       <div class="topbar-left">
+        <button class="btn-menu" type="button" (click)="menuAbierto = !menuAbierto"
+                [class.activo]="menuAbierto" aria-label="Abrir menú">
+          <span></span><span></span><span></span>
+        </button>
         <h2>Sistema de Monitoreo Hídrico</h2>
       </div>
 
@@ -132,8 +137,13 @@
 
         </div>
 
-        <span class="usuario-nombre">{{ usuario?.nombre || 'Usuario' }}</span>
-        <span class="usuario-rol">{{ usuario?.rol || '' }}</span>
+        <div class="usuario">
+          <span class="avatar">{{ (usuario?.nombre || 'U').charAt(0).toUpperCase() }}</span>
+          <div class="usuario-datos">
+            <span class="usuario-nombre">{{ usuario?.nombre || 'Usuario' }}</span>
+            <span class="usuario-rol">{{ usuario?.rol || '' }}</span>
+          </div>
+        </div>
         <button class="btn-logout" (click)="logout()">Salir</button>
 
       </div>

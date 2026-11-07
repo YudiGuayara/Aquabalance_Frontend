@@ -1,13 +1,42 @@
-<div class="container">
-  <div class="card">
+<div class="auth">
 
-    <h2>AquaBalance</h2>
-    <h3>Crear cuenta</h3>
+  <div class="auth-burbujas" aria-hidden="true">
+    <span style="--x:8%;--s:14px;--d:11s;--t:0s"></span>
+    <span style="--x:20%;--s:26px;--d:15s;--t:3s"></span>
+    <span style="--x:34%;--s:10px;--d:9s;--t:6s"></span>
+    <span style="--x:47%;--s:20px;--d:13s;--t:1.5s"></span>
+    <span style="--x:62%;--s:12px;--d:10s;--t:4s"></span>
+    <span style="--x:78%;--s:30px;--d:17s;--t:2s"></span>
+    <span style="--x:90%;--s:16px;--d:12s;--t:7s"></span>
+  </div>
 
-    <div class="error" *ngIf="error">{{ error }}</div>
-    <div class="success" *ngIf="exito">{{ exito }}</div>
+  <div class="auth-olas" aria-hidden="true">
+    <div class="auth-ola"><svg viewBox="0 0 2400 140" preserveAspectRatio="none" aria-hidden="true"><path fill="#ffffff" d="M0,60 C200,110 400,10 600,60 C800,110 1000,10 1200,60 C1400,110 1600,10 1800,60 C2000,110 2200,10 2400,60 V140 H0 Z"/></svg></div>
+    <div class="auth-ola"><svg viewBox="0 0 2400 140" preserveAspectRatio="none" aria-hidden="true"><path fill="#ffffff" d="M0,60 C200,110 400,10 600,60 C800,110 1000,10 1200,60 C1400,110 1600,10 1800,60 C2000,110 2200,10 2400,60 V140 H0 Z"/></svg></div>
+    <div class="auth-ola"><svg viewBox="0 0 2400 140" preserveAspectRatio="none" aria-hidden="true"><path fill="#ffffff" d="M0,60 C200,110 400,10 600,60 C800,110 1000,10 1200,60 C1400,110 1600,10 1800,60 C2000,110 2200,10 2400,60 V140 H0 Z"/></svg></div>
+  </div>
 
-    <form (ngSubmit)="onSubmit()" #formRef="ngForm">
+  <section class="auth-marca">
+    <img src="/Logotipo2.png" class="auth-logo" alt="AquaBalance">
+    <h1>Súmate a la red que cuida el agua</h1>
+    <p>Crea tu cuenta y empieza a consultar mediciones, alertas y recursos hídricos.</p>
+    <ul class="auth-puntos">
+      <li>Acceso según tu rol</li>
+      <li>Datos siempre actualizados</li>
+      <li>Reportes listos para compartir</li>
+    </ul>
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-card">
+
+      <h2>Crear cuenta</h2>
+      <p class="auth-sub">Solo toma un minuto.</p>
+
+      <div class="error" *ngIf="error">{{ error }}</div>
+      <div class="success" *ngIf="exito">{{ exito }}</div>
+
+      <form (ngSubmit)="onSubmit()" #formRef="ngForm">
 
       <!-- NOMBRE -->
       <div class="field">
@@ -84,19 +113,20 @@
       <!-- BOTÓN -->
       <button
         type="submit"
+        class="auth-boton"
         [disabled]="cargando || esFormularioInvalido()">
-
+        <span class="spinner" *ngIf="cargando"></span>
         {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
-
       </button>
 
     </form>
 
-    <!-- routerLink -->
-    <p class="link">
-      ¿Ya tienes cuenta?
-      <a routerLink="/auth/login">Inicia sesión</a>
-    </p>
+      <p class="link">
+        ¿Ya tienes cuenta?
+        <a routerLink="/auth/login">Inicia sesión</a>
+      </p>
 
-  </div>
+    </div>
+  </section>
+
 </div>

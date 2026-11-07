@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit {
   notificaciones$!: Observable<Notificacion[]>;
   noLeidas$!: Observable<number>;
   panelAbierto = false;
+  menuAbierto = false;
 
   constructor(
     private authService: AuthService,
@@ -50,6 +51,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  cerrarMenu(): void        { this.menuAbierto = false; }
   togglePanel(): void       { this.panelAbierto = !this.panelAbierto; }
   verTodas(): void          { this.panelAbierto = false; this.router.navigate(['/dashboard/notificaciones']); }
   marcarTodasLeidas(): void { this.notificacionService.marcarTodasLeidas(); }

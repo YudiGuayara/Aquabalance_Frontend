@@ -7,11 +7,12 @@ import { RecursoService } from '../../core/services/recurso.service';
 import { MedicionService } from '../../core/services/medicion.service';
 import { AlertaService } from '../../core/services/alerta.service';
 import { EventoService } from '../../core/services/evento.service';
+import { CountUpDirective } from '../../shared/count-up/count-up.directive';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, CountUpDirective],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -49,6 +50,12 @@ export class HomeComponent implements OnInit {
     });
     this.eventoService.listar().subscribe({
       next: (data) => this.totalEventos = data.length,
+    });
+  }
+
+  fechaHoy(): string {
+    return new Date().toLocaleDateString('es-CO', {
+      weekday: 'long', day: 'numeric', month: 'long',
     });
   }
 
