@@ -1,0 +1,129 @@
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <h2>📡 Red de Estaciones de Monitoreo</h2>
+      <p>Estado de las comunicaciones de los sensores que miden cada recurso hídrico</p>
+    </div>
+
+    @if (puedeSimular) {
+    <button class="btn-primary" type="button" (click)="alternarSimulador()">
+      {{ simulando() ? '⏸ Detener simulador' : '▶ Iniciar simulador de sensores' }}
+    </button>
+    }
+  </div>
+
+  @if (error()) {
+  <div class="error">{{ error() }}</div>
+  }
+
+  <!-- RESUMEN -->
+  @let r = resumen();
+  <div class="resumen">
+    <div class="res-card verde">
+      <span class="res-num">{{ r.enLinea }}</span>
+      <span class="res-lbl">En línea</span>
+    </div>
+    <div class="res-card naranja">
+      <span class="res-num">{{ r.degradadas }}</span>
+      <span class="res-lbl">Degradadas</span>
+    </div>
+    <div class="res-card rojo">
+
+      <span class="res-num">{{ r.fuera }}</span>
+      <span class="res-lbl">Fuera de línea</span>
+    </div>
+    <div class="res-card azul">
+      <span class="res-num">{{ r.latenciaPromedio !== null ? r.latenciaPromedio + ' ms' : '—' }}</span>
+      <span class="res-lbl">Latencia promedio</span>
+    </div>
+    <div class="res-card gris">
+      <span class="res-num">{{ r.perdidaPct }}%</span>
+      <span class="res-lbl">Pérdida de paquetes</span>
+    </div>
+  </div>
+
+  @if (puedeSimular && !simulando()) {
+  <p class="ayuda">
+    Aún no hay sensores físicos conectados. Pulsa <strong>«Iniciar simulador de sensores»</strong>:
+    cada estación enviará su telemetría al servidor por la red cada 5 segundos. Con
+    <strong>«Simular falla»</strong> puedes cortar el enlace de una estación y ver cómo pasa a
+    «Fuera de línea» a los 45 segundos.
+  </p>
+  }
+
+  <!-- ESTACIONES -->
+  @if (cargando()) {
+  <p class="ayuda">Cargando estaciones…</p>
+  } @else if (estaciones().length === 0 && !error()) {
+  <p class="ayuda">No hay recursos hídricos registrados, por eso no hay estaciones. Crea uno en «Recursos».</p>
+  }
+
+  <div class="grid">
+    @for (e of estaciones(); track e.id) {
+    <div class="card" [attr.data-estado]="e.estado">
+
+
+      <div class="card-top">
+        <div>
+          <h3>{{ e.nombre }}</h3>
+          <span class="tipo">{{ e.tipoRecurso }}</span>
+        </div>
+        <span class="estado">{{ textoEstado(e.estado) }}</span>
+      </div>
+
+      <div class="net-info">
+        <span class="chip">{{ e.protocolo }}</span>
+        <code>{{ e.ip }}:{{ e.puerto }}</code>
+      </div>
+
+      <div class="metricas">
+        <div>
+          <small>Latencia</small>
+          <strong>{{ e.latenciaMs !== null ? e.latenciaMs + ' ms' : '—' }}</strong>
+        </div>
+        <div>
+          <small>Señal</small>
+          <div class="senal">
+            @for (b of [1, 2, 3, 4]; track b) {
+            <span class="barra" [class.on]="b <= barras(e.senalDbm)" [style.height.px]="4 + b * 4"></span>
+            }
+            <span class="dbm">{{ e.senalDbm !== null ? e.senalDbm + ' dBm' : '—' }}</span>
+          </div>
+        </div>
+        <div>
+          <small>Batería</small>
+          <strong>{{ e.bateriaPct !== null ? e.bateriaPct + '%' : '—' }}</strong>
+        </div>
+
+        <div>
+          <small>Pérdida</small>
+          <strong>{{ e.perdidaPct }}%</strong>
+        </div>
+      </div>
+
+      <div class="pie">
+        Última comunicación: {{ hace(e.segundosSinComunicacion) }}
+        · {{ e.paquetesRecibidos }} recibidos / {{ e.paquetesPerdidos }} perdidos
+      </div>
+
+      @if (puedeSimular && simulando()) {
+      <button class="btn-falla" type="button" (click)="alternarFalla(e)">
+        {{ apagadas().has(e.id) ? '🔌 Restablecer enlace' : '⚡ Simular falla de red' }}
+      </button>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- REGISTRO DE EVENTOS -->
+  @if (eventos().length > 0) {
+  <h3 class="sub">Registro de transmisiones</h3>
+  <div class="log">
+    @for (linea of eventos(); track $index) {
+    <div>{{ linea }}</div>
+    }
+  </div>
+  }
+</div>

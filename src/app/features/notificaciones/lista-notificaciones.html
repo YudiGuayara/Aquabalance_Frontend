@@ -1,0 +1,137 @@
+
+
+<section class="notif-wrapper">
+
+  <!-- CABECERA -->
+  <div class="notif-header">
+    <div class="notif-title-block">
+      <span class="notif-icon-main">🔔</span>
+      <h2 class="notif-title">Notificaciones</h2>
+      <span class="badge-noLeidas" *ngIf="(noLeidas$ | async)! > 0">
+        {{ noLeidas$ | async }}
+      </span>
+    </div>
+
+    <button
+      class="btn-marcar-todas"
+      (click)="marcarTodasLeidas()"
+      [disabled]="(noLeidas$ | async) === 0"
+    >
+      Marcar todas como leídas
+    </button>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="notif-filtros">
+    <button
+      *ngFor="let f of filtros"
+      class="btn-filtro"
+      [class.activo]="filtroActivo === f"
+      (click)="setFiltro(f)"
+    >
+      {{ labelFiltro(f) }}
+    </button>
+  </div>
+
+  <!-- LISTA -->
+  <ng-container *ngIf="notificaciones$ | async as lista">
+
+    <div class="notif-lista" *ngIf="filtrar(lista).length > 0; else vacio">
+
+      <div
+        class="notif-item"
+        *ngFor="let n of filtrar(lista); trackBy: trackById"
+        [class.no-leida]="!n.leida"
+        (click)="toggleExpandir(n)"
+      >
+
+        <!-- ICONO -->
+        <div class="notif-icono">{{ iconoPorTipo(n.tipo) }}</div>
+
+        <!-- CONTENIDO -->
+        <div class="notif-contenido">
+
+          <div class="notif-top-row">
+            <span class="notif-titulo">{{ n.titulo }}</span>
+            <span class="nivel-badge" [ngClass]="clasePorNivel(n.nivel)">
+              {{ n.nivel }}
+            </span>
+          </div>
+
+          <p class="notif-mensaje">{{ n.mensaje }}</p>
+
+          <!-- DETALLE EXPANDIBLE -->
+          <div class="notif-detalle" *ngIf="n.expandida">
+            <div class="detalle-grid">
+
+              <div class="detalle-item">
+                <span>🧪</span>
+                <div>
+                  <strong>Tipo</strong>
+                  <p>{{ n.tipo }}</p>
+                </div>
+              </div>
+
+              <div class="detalle-item">
+                <span>⚠️</span>
+                <div>
+                  <strong>Nivel</strong>
+                  <p>{{ n.nivel }}</p>
+                </div>
+              </div>
+
+              <div class="detalle-item">
+                <span>✅</span>
+                <div>
+                  <strong>Estado</strong>
+                  <p>{{ n.leida ? 'Leída' : 'Sin leer' }}</p>
+                </div>
+              </div>
+
+              <div class="detalle-item">
+                <span>🕒</span>
+                <div>
+                  <strong>Fecha</strong>
+                  <p>{{ formatearFecha(n.fecha) }}</p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="detalle-extra">
+              <p>AquaBalance detectó variaciones ambientales que requieren
+                monitoreo preventivo en la zona.</p>
+            </div>
+          </div>
+
+          <div class="notif-meta">
+            <span class="notif-tipo">{{ n.tipo }}</span>
+            <span class="notif-fecha">{{ formatearFecha(n.fecha) }}</span>
+          </div>
+
+        </div>
+
+        <!-- BOTÓN LEÍDA — usa $event para NO propagar al div padre -->
+        <button
+          class="btn-leer"
+          *ngIf="!n.leida"
+          (click)="marcarLeida(n.id, $event)"
+          title="Marcar como leída"
+        >
+          ✓
+        </button>
+
+      </div>
+
+    </div>
+
+    <ng-template #vacio>
+      <div class="notif-vacio">
+        <span class="vacio-icono">💧</span>
+        <p>Sin notificaciones para este filtro</p>
+      </div>
+    </ng-template>
+
+  </ng-container>
+
+</section>

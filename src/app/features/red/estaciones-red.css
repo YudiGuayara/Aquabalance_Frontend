@@ -1,0 +1,160 @@
+.page { max-width: 1100px; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+.page-header h2 { font-size: 22px; color: #1a3c5e; }
+.page-header p { color: #718096; font-size: 14px; margin-top: 4px; }
+
+.btn-primary {
+  background: #0077b6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: #005f8e; }
+
+.error {
+  background: #fff5f5;
+  color: #c53030;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  border: 1px solid #fed7d7;
+}
+
+.ayuda {
+  background: #e6f7ff;
+  color: #1a3c5e;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* RESUMEN */
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.res-card {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 4px solid #a0aec0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.res-num { font-size: 22px; font-weight: 700; color: #1a3c5e; }
+.res-lbl { font-size: 12px; color: #718096; }
+
+.res-card.verde { border-left-color: #38a169; }
+.res-card.naranja { border-left-color: #dd6b20; }
+.res-card.rojo { border-left-color: #e53e3e; }
+.res-card.azul { border-left-color: #0077b6; }
+
+/* TARJETAS DE ESTACIÓN */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border-top: 4px solid #a0aec0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card[data-estado='EN_LINEA'] { border-top-color: #38a169; }
+.card[data-estado='DEGRADADA'] { border-top-color: #dd6b20; }
+.card[data-estado='FUERA_DE_LINEA'] { border-top-color: #e53e3e; }
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.card-top h3 { font-size: 16px; color: #1a3c5e; }
+.tipo { font-size: 12px; color: #718096; }
+
+.estado {
+  font-size: 12px;
+  font-weight: 600;
+
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #4a5568;
+  white-space: nowrap;
+}
+[data-estado='EN_LINEA'] .estado { background: #c6f6d5; color: #22543d; }
+[data-estado='DEGRADADA'] .estado { background: #feebc8; color: #7b341e; }
+[data-estado='FUERA_DE_LINEA'] .estado { background: #fed7d7; color: #742a2a; }
+
+.net-info { display: flex; align-items: center; gap: 10px; }
+.chip {
+  background: #1a3c5e;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+code { font-size: 13px; color: #2d3748; background: #f0f4f8; padding: 2px 8px; border-radius: 6px; }
+
+.metricas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.metricas small { display: block; font-size: 11px; color: #718096; margin-bottom: 4px; }
+.metricas strong { font-size: 15px; color: #1a3c5e; }
+
+.senal { display: flex; align-items: flex-end; gap: 2px; }
+.barra { width: 4px; background: #cbd5e0; border-radius: 1px; }
+.barra.on { background: #0077b6; }
+.dbm { font-size: 11px; color: #4a5568; margin-left: 4px; }
+
+.pie { font-size: 12px; color: #718096; }
+
+
+.btn-falla {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.btn-falla:hover { border-color: #0077b6; color: #0077b6; }
+
+/* REGISTRO */
+.sub { margin: 28px 0 10px; font-size: 15px; color: #1a3c5e; }
+.log {
+  background: #1a3c5e;
+  color: #cbe9ff;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-x: auto;
+  min-height: 40px;
+}
+
+@media (max-width: 900px) {
+  .resumen { grid-template-columns: repeat(2, 1fr); }
+}

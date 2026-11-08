@@ -1,0 +1,211 @@
+<div class="w-wrapper">
+
+  <div class="w-loading" *ngIf="cargando">
+    <div class="w-loading-icon">🌤️</div>
+    <p>Obteniendo tu ubicación...</p>
+  </div>
+
+  <div class="w-error" *ngIf="!cargando && error">
+    <div class="w-error-icon">📍</div>
+    <p>{{ error }}</p>
+    <button (click)="obtenerClima()">Reintentar</button>
+  </div>
+
+  <div
+    class="w-app"
+    [class.w-sun]="tipo === 'sun'"
+    [class.w-rain]="tipo === 'rain'"
+    [class.w-cloud]="tipo === 'cloud'"
+    *ngIf="!cargando && !error"
+  >
+
+    <div class="w-card">
+
+      <!-- SOL -->
+      <ng-container *ngIf="tipo === 'sun'">
+        <div class="w-sun-orb"></div>
+        <div class="w-sun-ring"></div>
+      </ng-container>
+
+      <!-- NUBES -->
+      <ng-container *ngIf="tipo === 'cloud'">
+        <div class="w-nube w-nube-a"></div>
+        <div class="w-nube w-nube-b"></div>
+        <div class="w-nube w-nube-c"></div>
+      </ng-container>
+
+      <!-- LLUVIA -->
+      <ng-container *ngIf="tipo === 'rain'">
+        <div class="w-nube w-nube-a"></div>
+        <div class="w-nube w-nube-b"></div>
+
+        <div class="w-gota" style="left:5%"></div>
+        <div class="w-gota" style="left:15%"></div>
+        <div class="w-gota" style="left:25%"></div>
+        <div class="w-gota" style="left:35%"></div>
+        <div class="w-gota" style="left:45%"></div>
+        <div class="w-gota" style="left:55%"></div>
+        <div class="w-gota" style="left:65%"></div>
+        <div class="w-gota" style="left:75%"></div>
+      </ng-container>
+
+      <!-- TOP -->
+      <div class="w-topbar">
+
+        <div class="w-location">
+          <i class="ti ti-map-pin"></i>
+          <span>{{ ciudad }}</span>
+        </div>
+
+        <span class="w-time">
+          {{ hora }}
+        </span>
+
+      </div>
+
+      <!-- TEMPERATURA -->
+      <div class="w-main">
+
+        <div class="w-temp">
+          {{ temperatura }}°
+        </div>
+
+        <div class="w-desc">
+
+          <i class="ti ti-sun w-icon" *ngIf="tipo === 'sun'"></i>
+
+          <i class="ti ti-cloud-rain w-icon" *ngIf="tipo === 'rain'"></i>
+
+          <i class="ti ti-cloud w-icon" *ngIf="tipo === 'cloud'"></i>
+
+          <span class="w-label">
+            {{ weatherLabel }}
+          </span>
+
+        </div>
+      </div>
+
+      <div class="w-line"></div>
+
+      <!-- DETALLES -->
+      <div class="w-details">
+
+        <div class="w-detail">
+          <i class="ti ti-wind"></i>
+          <span class="w-detail-val">{{ viento }} km/h</span>
+          <span class="w-detail-lbl">Viento</span>
+        </div>
+
+        <div class="w-detail">
+          <i class="ti ti-compass"></i>
+          <span class="w-detail-val">{{ direccion }}°</span>
+          <span class="w-detail-lbl">Dirección</span>
+        </div>
+
+        <div class="w-detail">
+          <i class="ti ti-temperature"></i>
+          <span class="w-detail-val">{{ sensTermica }}°</span>
+          <span class="w-detail-lbl">Sens. térmica</span>
+        </div>
+
+        <div class="w-detail">
+          <i class="ti ti-droplet"></i>
+          <span class="w-detail-val">{{ humedad }}%</span>
+          <span class="w-detail-lbl">Humedad</span>
+        </div>
+
+        <div class="w-detail">
+          <i class="ti ti-cloud-rain"></i>
+          <span class="w-detail-val">{{ lluvia }} mm</span>
+          <span class="w-detail-lbl">Lluvia</span>
+        </div>
+
+        <div class="w-detail">
+          <i class="ti ti-sun-high"></i>
+          <span class="w-detail-val">{{ uv }}</span>
+          <span class="w-detail-lbl">UV</span>
+        </div>
+
+      </div>
+
+      <div class="w-line"></div>
+
+      <!-- ESTADO HÍDRICO -->
+      <div class="w-water-card">
+
+        <div class="w-water-title">
+          🌊 Estado Hídrico
+        </div>
+
+        <div class="w-water-grid">
+
+          <div class="w-water-item">
+            <span class="w-water-value">
+              {{ calidadAgua }}
+            </span>
+
+            <span class="w-water-label">
+              Calidad del Agua
+            </span>
+          </div>
+
+          <div class="w-water-item">
+            <span class="w-water-value">
+              {{ riesgo }}
+            </span>
+
+            <span class="w-water-label">
+              Riesgo Ambiental
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="w-line"></div>
+
+      <!-- PRONOSTICO -->
+      <div class="w-forecast-title">
+        Próximos 7 días
+      </div>
+
+      <div class="w-forecast">
+
+        <div
+          class="w-day"
+          *ngFor="let d of pronostico; let i = index"
+          [class.w-today]="i === 0"
+        >
+
+          <span class="w-day-name">
+            {{ i === 0 ? 'Hoy' : d.dia }}
+          </span>
+
+          <i class="ti ti-sun" *ngIf="d.max >= 28"></i>
+
+          <i class="ti ti-cloud-rain" *ngIf="d.max < 20"></i>
+
+          <i class="ti ti-cloud" *ngIf="d.max >= 20 && d.max < 28"></i>
+
+          <div class="w-day-temps">
+
+            <span class="w-max">
+              {{ d.max }}°
+            </span>
+
+            <span class="w-min">
+              {{ d.min }}°
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,233 @@
+<div class="page">
+
+  <div class="page-header">
+
+    <div>
+      <h2>🚨 Eventos</h2>
+      <p>Eventos generados por mediciones críticas</p>
+    </div>
+
+    <!-- 🔥 SOLO ADMIN / OPERADOR -->
+    <button
+      *ngIf="!isPublico"
+      class="btn-primary"
+      (click)="abrirFormulario()">
+
+      + Nuevo Evento
+
+    </button>
+
+  </div>
+
+  <div class="error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" *ngIf="mostrarFormulario">
+
+    <div class="modal">
+
+      <h3>
+        {{ modoEdicion ? 'Editar' : 'Nuevo' }} Evento
+      </h3>
+
+      <!-- DESCRIPCIÓN -->
+      <div class="field">
+
+        <label>Descripción</label>
+
+        <textarea
+          [(ngModel)]="form.descripcion"
+          placeholder="Describe el evento..."
+          rows="3">
+
+        </textarea>
+
+      </div>
+
+      <!-- MAGNITUD -->
+      <div class="field">
+
+        <label>Magnitud</label>
+
+        <select [(ngModel)]="form.magnitud">
+
+          <option
+            *ngFor="let m of magnitudes"
+            [value]="m">
+
+            {{ m }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- RECURSO -->
+      <div class="field">
+
+        <label>Recurso afectado</label>
+
+        <select [(ngModel)]="form.idRecurso">
+
+          <option [value]="0" disabled>
+            Selecciona un recurso
+          </option>
+
+          <option
+            *ngFor="let r of recursos"
+            [value]="r.id">
+
+            {{ r.nombre }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- CONTAMINANTE -->
+      <div class="field">
+
+        <label>Contaminante</label>
+
+        <select [(ngModel)]="form.idContaminante">
+
+          <option [value]="0" disabled>
+            Selecciona un contaminante
+          </option>
+
+          <option
+            *ngFor="let c of contaminantes"
+            [value]="c.id">
+
+            {{ c.nombre }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- BOTONES -->
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cerrarFormulario()">
+
+          Cancelar
+
+        </button>
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="guardar()">
+
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-container">
+
+    <div class="loading" *ngIf="cargando">
+      Cargando...
+    </div>
+
+    <table *ngIf="!cargando && eventos.length > 0">
+
+      <thead>
+
+      <tr>
+
+        <th>ID</th>
+        <th>Descripción</th>
+        <th>Magnitud</th>
+        <th>Recurso</th>
+        <th>Contaminante</th>
+        <th>Fecha</th>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <th *ngIf="!isPublico">
+          Acciones
+        </th>
+
+      </tr>
+
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let e of eventos">
+
+        <td>{{ e.id }}</td>
+
+        <td>{{ e.descripcion }}</td>
+
+        <td>
+
+          <span
+            class="badge"
+            [ngClass]="magnitudColor(e.magnitud)">
+
+            {{ e.magnitud }}
+
+          </span>
+
+        </td>
+
+        <td>{{ nombreRecurso(e.idRecurso) }}</td>
+
+        <td>{{ nombreContaminante(e.idContaminante) }}</td>
+
+        <td>{{ e.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+
+        <!-- 🔥 SOLO ADMIN / OPERADOR -->
+        <td *ngIf="!isPublico">
+
+          <button
+            class="btn-edit"
+            (click)="editar(e)">
+
+            ✏️
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="eliminar(e.id!)">
+
+            🗑️
+
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+    <div
+      class="empty"
+      *ngIf="!cargando && eventos.length === 0">
+
+      No hay eventos registrados aún.
+
+    </div>
+
+  </div>
+
+</div>

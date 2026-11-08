@@ -1,0 +1,73 @@
+<div class="home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-olas" aria-hidden="true">
+      <div class="hero-ola"><svg viewBox="0 0 2400 140" preserveAspectRatio="none"><path d="M0,60 C200,110 400,10 600,60 C800,110 1000,10 1200,60 C1400,110 1600,10 1800,60 C2000,110 2200,10 2400,60 V140 H0 Z"/></svg></div>
+      <div class="hero-ola"><svg viewBox="0 0 2400 140" preserveAspectRatio="none"><path d="M0,60 C200,110 400,10 600,60 C800,110 1000,10 1200,60 C1400,110 1600,10 1800,60 C2000,110 2200,10 2400,60 V140 H0 Z"/></svg></div>
+    </div>
+
+    <div class="hero-texto">
+      <p class="hero-fecha">{{ fechaHoy() }}</p>
+      <h1>{{ saludo() }}, {{ usuario?.nombre }}</h1>
+      <p class="hero-sub">Así va el monitoreo de recursos hídricos hoy.</p>
+    </div>
+
+    <span class="rol-badge" *ngIf="usuario?.rol">{{ usuario?.rol }}</span>
+  </section>
+
+  <!-- RESUMEN -->
+  <div class="resumen-grid" *ngIf="!cargando; else esqueleto">
+    <a routerLink="../recursos" class="resumen-card azul">
+      <div class="resumen-icono">🏞️</div>
+      <div class="resumen-dato">
+        <div class="resumen-numero" [countUp]="totalRecursos">0</div>
+        <div class="resumen-label">Recursos hídricos</div>
+      </div>
+    </a>
+
+    <a routerLink="../mediciones" class="resumen-card verde">
+      <div class="resumen-icono">📊</div>
+      <div class="resumen-dato">
+        <div class="resumen-numero" [countUp]="totalMediciones">0</div>
+        <div class="resumen-label">Mediciones</div>
+      </div>
+    </a>
+
+    <a routerLink="../eventos" class="resumen-card naranja">
+      <div class="resumen-icono">🚨</div>
+      <div class="resumen-dato">
+        <div class="resumen-numero" [countUp]="totalEventos">0</div>
+        <div class="resumen-label">Eventos</div>
+      </div>
+    </a>
+
+    <a routerLink="../alertas" class="resumen-card rojo">
+      <div class="resumen-icono">⚠️</div>
+      <div class="resumen-dato">
+        <div class="resumen-numero" [countUp]="totalAlertas">0</div>
+        <div class="resumen-label">Alertas</div>
+      </div>
+    </a>
+  </div>
+
+  <ng-template #esqueleto>
+    <div class="resumen-grid">
+      <div class="resumen-card esqueleto" *ngFor="let _ of [1,2,3,4]"></div>
+    </div>
+  </ng-template>
+
+  <!-- ACCESOS -->
+  <section class="accesos-rapidos">
+    <h3>Accesos rápidos</h3>
+    <div class="accesos-grid">
+      <a routerLink="../mediciones" class="acceso-card"><span class="acceso-emoji">📊</span><span>Nueva medición</span></a>
+      <a routerLink="../eventos" class="acceso-card"><span class="acceso-emoji">🚨</span><span>Ver eventos</span></a>
+      <a routerLink="../alertas" class="acceso-card"><span class="acceso-emoji">⚠️</span><span>Ver alertas</span></a>
+      <a routerLink="../reportes" class="acceso-card"><span class="acceso-emoji">📄</span><span>Reportes</span></a>
+      <a routerLink="../clima" class="acceso-card"><span class="acceso-emoji">🌤️</span><span>Clima</span></a>
+      <a routerLink="../contaminantes" class="acceso-card"><span class="acceso-emoji">☣️</span><span>Contaminantes</span></a>
+    </div>
+  </section>
+
+</div>
