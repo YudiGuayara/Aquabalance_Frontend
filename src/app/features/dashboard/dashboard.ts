@@ -37,7 +37,10 @@ export class DashboardComponent implements OnInit {
     this.noLeidas$       = this.notificacionService.noLeidas$;
 
     // Conecta al backend SOLO después del login, dentro del dashboard
-    this.notificacionService.inicializar();
+    // El usuario publico no tiene permiso sobre notificaciones
+    if (this.esOperador()) {
+      this.notificacionService.inicializar();
+    }
   }
 
   @HostListener('document:click', ['$event'])

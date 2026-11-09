@@ -186,12 +186,17 @@ button, input, select, textarea { font-family: inherit; }
   backdrop-filter: blur(6px);
   animation: fundido 0.25s ease both;
   padding: 16px;
+  z-index: 1000;
+  overflow-y: auto;
 }
 .layout .content .modal {
+  box-sizing: border-box;
+  margin: auto;
   border-radius: var(--radio-l);
   box-shadow: var(--sombra-l);
   animation: pop 0.4s var(--rebote) both;
   max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
   overflow-y: auto;
 }
 .layout .content .modal h3 {
