@@ -76,7 +76,13 @@ button, input, select, textarea { font-family: inherit; }
 /* La pantalla que carga el router entra con suavidad al cambiar de ruta */
 .layout .content > *:not(router-outlet) {
   display: block;
-  animation: entra 0.5s var(--curva) backwards;
+  /* Solo opacidad: una animacion con transform atrapa los formularios (position: fixed)
+     dentro de la pantalla y los recorta */
+  animation: aparece 0.4s ease backwards;
+}
+@keyframes aparece {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ══════════════════════════════════════════════════════
