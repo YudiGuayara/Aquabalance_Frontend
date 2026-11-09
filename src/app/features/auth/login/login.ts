@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -12,7 +12,10 @@ import { LoginRequest } from '../../../core/models/auth.model';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
+
+  @ViewChild('emailInput') emailInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('passInput') passInput?: ElementRef<HTMLInputElement>;
 
   form: LoginRequest = {
     email: '',
@@ -41,8 +44,29 @@ export class LoginComponent {
     }
   }
 
-  onSubmit(): void {
+  /**
+   * Chrome rellena usuario y contraseña guardados sin avisar a Angular: el campo se ve lleno
+   * pero el modelo sigue vacío ("El correo es obligatorio" y el botón bloqueado).
+   * Se copia el valor real del DOM al modelo.
+   */
+  private sincronizarAutofill(): void {
+    const email = this.emailInput?.nativeElement.value;
+    const pass = this.passInput?.nativeElement.value;
+    if (email && !this.form.email) this.form.email = email;
+    if (pass && !this.form.password) this.form.password = pass;
+  }
 
+  ngAfterViewInit(): void {
+    [0, 150, 500, 1200].forEach((ms) => setTimeout(() => this.sincronizarAutofill(), ms));
+  }
+
+  onSubmit(): void {
+    this.sincronizarAutofill();
+
+    if (!this.form.email || !this.form.password) {
+      this.error = 'Escribe tu correo y tu contraseña.';
+      return;
+    }
 
     this.error = '';
     this.info = '';

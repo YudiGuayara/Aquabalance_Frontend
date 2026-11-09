@@ -78,7 +78,9 @@ button, input, select, textarea { font-family: inherit; }
   display: block;
   /* Solo opacidad: una animacion con transform atrapa los formularios (position: fixed)
      dentro de la pantalla y los recorta */
-  animation: aparece 0.4s ease backwards;
+  /* Sin animacion en el contenedor: cualquier animacion aqui puede atrapar los modales (position: fixed)
+     dentro de la pantalla y recortarlos. */
+  animation: none;
 }
 @keyframes aparece {
   from { opacity: 0; }

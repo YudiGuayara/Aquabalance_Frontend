@@ -46,6 +46,7 @@
         <div class="field">
           <label for="email">Correo electrónico</label>
           <input
+            #emailInput
             id="email"
             type="email"
             [(ngModel)]="form.email"
@@ -67,6 +68,7 @@
           <label for="password">Contraseña</label>
           <div class="auth-clave">
             <input
+              #passInput
               id="password"
               [type]="verPassword ? 'text' : 'password'"
               [(ngModel)]="form.password"
@@ -92,7 +94,7 @@
         <button
           type="submit"
           class="auth-boton"
-          [disabled]="cargando || !form.email || !form.password">
+          [disabled]="cargando">
           <span class="spinner" *ngIf="cargando"></span>
           {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
         </button>
