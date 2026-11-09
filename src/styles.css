@@ -76,7 +76,7 @@ button, input, select, textarea { font-family: inherit; }
 /* La pantalla que carga el router entra con suavidad al cambiar de ruta */
 .layout .content > *:not(router-outlet) {
   display: block;
-  animation: entra 0.5s var(--curva) both;
+  animation: entra 0.5s var(--curva) backwards;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -185,11 +185,14 @@ button, input, select, textarea { font-family: inherit; }
   background: rgba(5, 38, 59, 0.55);
   backdrop-filter: blur(6px);
   animation: fundido 0.25s ease both;
+  padding: 16px;
 }
 .layout .content .modal {
   border-radius: var(--radio-l);
   box-shadow: var(--sombra-l);
   animation: pop 0.4s var(--rebote) both;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
 }
 .layout .content .modal h3 {
   font-family: var(--fuente-titulo);
