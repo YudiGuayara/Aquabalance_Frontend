@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard }  from '../../core/guards/auth-guard';
 import { adminGuard } from '../../core/guards/admin-guard';
+import { operadorGuard } from '../../core/guards/operador-guard';
 import { DashboardComponent } from './dashboard';
 import { MapaComponent } from '../mapa/mapa.component';
 
@@ -58,6 +59,7 @@ export const dashboardRoutes: Routes = [
       },
       {
         path: 'notificaciones',
+        canActivate: [operadorGuard],
         loadComponent: () =>
           import('../notificaciones/lista-notificaciones')
             .then(m => m.ListaNotificacionesComponent),

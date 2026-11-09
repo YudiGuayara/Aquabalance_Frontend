@@ -151,7 +151,8 @@ button, input, select, textarea { font-family: inherit; }
   border: 1px solid var(--linea);
   border-radius: var(--radio-m);
   box-shadow: var(--sombra-s);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 .layout .content table { border-collapse: separate; border-spacing: 0; }
 .layout .content thead { background: linear-gradient(180deg, #f6fbfd, var(--espuma)); }

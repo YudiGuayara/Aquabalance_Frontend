@@ -54,8 +54,14 @@ export class AuthService {
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data).pipe(
       tap((response: AuthResponse) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('usuario', JSON.stringify(response));
+        try {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('usuario', JSON.stringify(response));
+        } catch {
+          // Disco lleno o almacenamiento bloqueado: sin esto el usuario "entra" y lo sacan al instante
+          this.limpiarSesion();
+          throw new Error('No se pudo guardar la sesión en el navegador. Libera espacio en el disco y vuelve a intentar.');
+        }
         this.programarExpiracion();
       })
     );
